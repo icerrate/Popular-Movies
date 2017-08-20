@@ -4,8 +4,12 @@ android {
     compileSdkVersion 25
     buildToolsVersion "26.0.0"
 
-    def THE_MOVIE_DB_URL = "http://api.themoviedb.org"
-    def THE_MOVIE_DB_API_KEY = "THE_MOVIE_DB_API_KEY"
+    def Properties serverProps = new Properties()
+    serverProps.load(new FileInputStream(file('../project.properties')))
+
+    def THE_MOVIE_DB_API_URL = serverProps.getProperty("apiBaseUrl")
+    def THE_MOVIE_DB_IMAGES_URL = serverProps.getProperty("imagesBaseUrl")
+    def THE_MOVIE_DB_API_KEY = serverProps.getProperty("tmdApiKey")
 
     defaultConfig {
         applicationId "com.icerrate.popularmovies"
@@ -14,7 +18,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "BASE_URL", THE_MOVIE_DB_URL
+        buildConfigField "String", "API_BASE_URL", THE_MOVIE_DB_API_URL
+        buildConfigField "String", "IMAGES_BASE_URL", THE_MOVIE_DB_IMAGES_URL
         buildConfigField "String", "TMD_API_KEY", THE_MOVIE_DB_API_KEY
     }
 
@@ -33,7 +38,8 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
-    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'

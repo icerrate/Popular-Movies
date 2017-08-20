@@ -1,16 +1,16 @@
-package com.icerrate.popularmovies.model;
+package com.icerrate.popularmovies.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+import com.icerrate.popularmovies.BuildConfig;
 
 import java.util.ArrayList;
 
 /**
- * Created by User on 8/16/2017.
+ * Created by Ivan Cerrate
  */
-
 public class Movie implements Parcelable {
 
     private int id;
@@ -63,6 +63,10 @@ public class Movie implements Parcelable {
 
     public String getPosterPath() {
         return posterPath;
+    }
+
+    public String getPosterUrl(String size) {
+        return BuildConfig.IMAGES_BASE_URL + size + posterPath;
     }
 
     public String getOriginalLanguage() {
