@@ -10,72 +10,72 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
+import com.icerrate.popularmovies.view.common.LoadMoreBaseAdapter;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
- * Created by Ivan Cerrate
+ * Created by Ivan Cerrate.
  */
-public class MoviesCatalogAdapter extends RecyclerView.Adapter<MoviesCatalogAdapter.ViewHolder> {
 
-    private ArrayList<Movie> items;
+public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
+
     private OnItemClickListener onItemClickListener;
+    private int columns;
 
-    public MoviesCatalogAdapter(OnItemClickListener onItemClickListener) {
-        this(new ArrayList<Movie>(), onItemClickListener);
+    public MoviesCatalogAdapter(OnItemClickListener onItemClickListener, int columns) {
+        this(new ArrayList<Movie>(), onItemClickListener, columns);
     }
 
-    public MoviesCatalogAdapter(ArrayList<Movie> items, OnItemClickListener onItemClickListener) {
-        this.items = items;
+    public MoviesCatalogAdapter(ArrayList<Movie> movies, OnItemClickListener onItemClickListener, int columns) {
+        this.data = movies;
         this.onItemClickListener = onItemClickListener;
+        this.columns = columns;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_movies_catalog, parent, false);
-        layoutView.getLayoutParams().height = (int) (parent.getWidth() / 2 *
+    public RecyclerView.ViewHolder onCreateDataViewHolder(ViewGroup parent, int viewType) {
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movies_catalog, parent, false);
+        layoutView.getLayoutParams().height = (int) (parent.getWidth() / columns *
                 1.5f);
-        return new ViewHolder(layoutView, onItemClickListener);
+        return new MovieViewHolder(layoutView, onItemClickListener);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Context context = holder.itemView.getContext();
-        Movie movie = items.get(position);
-        String url = movie.getPosterUrl("w342");
+    public void onBindDataViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof MovieViewHolder) {
+            MovieViewHolder movieViewHolder = (MovieViewHolder) holder;
+            Movie movie = data.get(position);
+            Context context = holder.itemView.getContext();
+            String url = movie.getPosterUrl("w342");
 
-        Glide.with(context).load(url).placeholder(context.getResources().getDrawable(R.drawable.movie_placeholder)).into(holder.posterImageView);
+            Glide.with(context)
+                    .load(url)
+                    .placeholder(context.getResources().getDrawable(R.drawable.movie_placeholder))
+                    .into(movieViewHolder.posterImageView);
 
-        holder.posterImageView.setTag(holder.posterImageView.getId(), movie);
+            movieViewHolder.posterImageView.setTag(movieViewHolder.posterImageView.getId(), movie);
+        }
     }
 
     public void addItems(ArrayList<Movie> items) {
-        this.items.addAll(items);
+        this.data.addAll(items);
         notifyDataSetChanged();
     }
 
     public void resetItems() {
-        this.items.clear();
+        this.data.clear();
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemCount() {
-        return items.size();
-    }
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        @Bind(R.id.poster) public ImageView posterImageView;
+        private ImageView posterImageView;
         private OnItemClickListener onItemClickListener;
 
-        public ViewHolder(View itemView, OnItemClickListener onItemClickListener) {
+        public MovieViewHolder(View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            posterImageView = (ImageView) itemView.findViewById(R.id.poster);
             this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
         }

@@ -20,20 +20,7 @@ public abstract class BasePresenter<T extends BaseView> {
         return view.getContext().getResources().getColor(resId);
     }
 
-    private void showError(String messageError) {
-        view.showError(messageError);
-    }
-
     public void cancelRequests(){
 
-    }
-
-    protected abstract class PresenterCallback<T> implements BaseCallback<T> {
-
-        @Override
-        public void onFailure(String messageError) {
-            view.dismissProgressDialog();
-            view.showError(messageError);
-        }
     }
 }

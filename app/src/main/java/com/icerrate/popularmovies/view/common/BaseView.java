@@ -8,13 +8,10 @@ import android.content.Context;
 
 public interface BaseView {
 
-    void setToolbar(String title);
     void showProgressBar();
     void hideProgressBar();
+    void showRefreshLayout();
     void hideRefreshLayout();
-    void showProgressDialog();
-    void showProgressDialog(String message);
-    void dismissProgressDialog();
     void showError(String errorMessage);
     Context getContext();
 }

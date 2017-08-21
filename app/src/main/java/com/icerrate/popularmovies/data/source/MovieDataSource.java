@@ -21,14 +21,14 @@ public class MovieDataSource extends BaseService {
         this.movieAPI = movieAPI;
     }
 
-    public void getPopularMovie(BaseCallback<PaginatedResponse<Movie>> callback) {
-        final Call<PaginatedResponse<Movie>> call = movieAPI.getPopularMovies();
+    public void getPopularMovie(Integer page, BaseCallback<PaginatedResponse<Movie>> callback) {
+        final Call<PaginatedResponse<Movie>> call = movieAPI.getPopularMovies(page);
         ServiceRequest<PaginatedResponse<Movie>> serviceRequest = new ServerServiceRequest<>(call);
         enqueue(serviceRequest, callback);
     }
 
-    public void getTopRatedMovie(BaseCallback<PaginatedResponse<Movie>> callback) {
-        final Call<PaginatedResponse<Movie>> call = movieAPI.getTopRatedMovies();
+    public void getTopRatedMovie(Integer page, BaseCallback<PaginatedResponse<Movie>> callback) {
+        final Call<PaginatedResponse<Movie>> call = movieAPI.getTopRatedMovies(page);
         ServiceRequest<PaginatedResponse<Movie>> serviceRequest = new ServerServiceRequest<>(call);
         enqueue(serviceRequest, callback);
     }

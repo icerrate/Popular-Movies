@@ -19,7 +19,10 @@ public class PaginatedResponse<T> implements Parcelable {
     private Integer totalPages;
     private ArrayList<T> results;
 
-    public PaginatedResponse() {}
+    public PaginatedResponse() {
+        page = 0;
+        results = new ArrayList<>();
+    }
 
     public Integer getPage() {
         return page;
@@ -33,8 +36,22 @@ public class PaginatedResponse<T> implements Parcelable {
         return totalPages;
     }
 
+    public boolean isLastPage() {
+        if (page != null && totalPages != null && page.intValue() == totalPages.intValue()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public ArrayList<T> getResults() {
         return results;
+    }
+
+    public void setMeta(Integer page, Integer totalResults, Integer totalPages) {
+        this.page = page;
+        this.totalResults = totalResults;
+        this.totalPages = totalPages;
     }
 
     protected PaginatedResponse(Parcel in) {
