@@ -9,5 +9,6 @@ import android.support.v4.app.Fragment;
 public interface BaseFragmentListener {
 
     void replaceFragment(int containerId, Fragment fragment);
+
     void setTitle(String title);
 }

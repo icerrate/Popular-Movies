@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListener {
 
     private boolean loading = false;
-    private int visibleThreshold = 4;
+    private int visibleThreshold = 0;
     int firstVisibleItem, visibleItemCount, totalItemCount;
 
     private GridLayoutManager mGridLayoutManager;

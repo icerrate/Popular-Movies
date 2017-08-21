@@ -40,8 +40,12 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     private RecyclerView moviesRecyclerView;
 
     private MoviesCatalogPresenter presenter;
+
     private MoviesCatalogAdapter adapter;
+
     private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
+
+    protected ViewStub footerProgressBar;
 
     public static MoviesCatalogFragment newInstance() {
         return new MoviesCatalogFragment();
@@ -62,6 +66,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         progressBar = (ViewStub) view.findViewById(R.id.progress);
         moviesRecyclerView = (RecyclerView) view.findViewById(R.id.movies);
+        footerProgressBar = (ViewStub) view.findViewById(R.id.footer_progress);
 
         return view;
     }
@@ -81,8 +86,15 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_movies_catalog, menu);
+        SortType currentSortType = presenter.getSortType();
+        if (currentSortType.equals(SortType.MOST_POPULAR)) {
+            MenuItem item = menu.findItem(R.id.popular);
+            item.setChecked(true);
+        } else if (currentSortType.equals(SortType.HIGHEST_RATED)) {
+            MenuItem item = menu.findItem(R.id.top_rated);
+            item.setChecked(true);
+        }
     }
 
     @Override
@@ -99,6 +111,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
             default:
                 return false;
         }
+        item.setChecked(true);
         return true;
     }
 
@@ -122,6 +135,8 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
         endlessRecyclerOnScrollListener = new EndlessRecyclerOnScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore() {
+                footerProgressBar.setVisibility(View.VISIBLE);
+                adapter.setLoading(true);
                 presenter.loadNextMoviesPage();
             }
         };
@@ -159,6 +174,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     @Override
     public void resetMovies() {
         adapter.resetItems();
+        adapter.setLoading(false);
         endlessRecyclerOnScrollListener.setLoading(false);
     }
 
@@ -166,5 +182,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public void showMovies(ArrayList<Movie> movies) {
         adapter.addItems(movies);
         endlessRecyclerOnScrollListener.setLoading(false);
+        adapter.setLoading(false);
+        footerProgressBar.setVisibility(View.GONE);
     }
 }

@@ -15,6 +15,7 @@ import android.view.ViewStub;
 public abstract class BaseFragment extends Fragment implements BaseView {
 
     protected SwipeRefreshLayout refreshLayout;
+
     protected ViewStub progressBar;
 
     protected BaseFragmentListener fragmentListener;
@@ -67,31 +68,16 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     }
 
     @Override
-    public void showProgressBar() {
+    public void showProgressBar(boolean show) {
         if (progressBar != null) {
-            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
 
     @Override
-    public void hideProgressBar() {
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
-        }
-
-    }
-
-    @Override
-    public void showRefreshLayout() {
+    public void showRefreshLayout(boolean show) {
         if (refreshLayout != null) {
-            refreshLayout.setRefreshing(true);
-        }
-    }
-
-    @Override
-    public void hideRefreshLayout() {
-        if (refreshLayout != null) {
-            refreshLayout.setRefreshing(false);
+            refreshLayout.setRefreshing(show);
         }
     }
 

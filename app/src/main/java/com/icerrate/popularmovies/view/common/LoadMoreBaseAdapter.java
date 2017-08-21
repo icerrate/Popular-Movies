@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.icerrate.popularmovies.R;
 
@@ -27,7 +26,7 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<Recycl
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_LOAD) {
-            View progressView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.progress_bar_item, parent, false);
+            View progressView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_space, parent, false);
             return new ProgressViewHolder(progressView);
         } else {
             return onCreateDataViewHolder(parent, viewType);
@@ -38,18 +37,12 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<Recycl
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == VIEW_TYPE_LOAD ) {
-            onBindProgressView(holder, position);
-        } else {
+        if (getItemViewType(position) == VIEW_TYPE_DATA ) {
             onBindDataViewHolder(holder, position);
         }
     }
 
     public abstract void onBindDataViewHolder(RecyclerView.ViewHolder holder, int position);
-
-    protected void onBindProgressView(RecyclerView.ViewHolder holder, int position){
-        ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
-    }
 
     @Override
     public int getItemViewType(int position) {
@@ -62,11 +55,9 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
 
         public ProgressViewHolder(View v) {
             super(v);
-            progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
         }
     }
 
@@ -114,4 +105,5 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<Recycl
         };
         handler.post(r);
     }
+
 }

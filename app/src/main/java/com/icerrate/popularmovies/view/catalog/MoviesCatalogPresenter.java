@@ -20,6 +20,7 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
     }
 
     private SortType sortType;
+
     private PaginatedResponse<Movie> moviesPaginatedResponse = new PaginatedResponse<>();
 
     private MovieDataSource movieDataSource;
@@ -47,7 +48,7 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
 
     public void refreshMovies() {
         resetMovies();
-        view.showProgressBar();
+        view.showProgressBar(true);
         moviesPaginatedResponse = new PaginatedResponse<>();
         getMovies(true);
     }
@@ -78,15 +79,15 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
                 Log.e("PRESENTER - COUNT: ", String.valueOf(moviesPaginatedResponse.getResults().size()));
                 view.showMovies(response.getResults());
-                view.hideProgressBar();
-                view.hideRefreshLayout();
+                view.showProgressBar(false);
+                view.showRefreshLayout(false);
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
-                view.hideProgressBar();
-                view.hideRefreshLayout();
+                view.showProgressBar(false);
+                view.showRefreshLayout(false);
             }
         });
     }
@@ -106,15 +107,15 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
                 Log.e("PRESENTER - COUNT: ", String.valueOf(moviesPaginatedResponse.getResults().size()));
                 view.showMovies(response.getResults());
-                view.hideProgressBar();
-                view.hideRefreshLayout();
+                view.showProgressBar(false);
+                view.showRefreshLayout(false);
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
-                view.hideProgressBar();
-                view.hideRefreshLayout();
+                view.showProgressBar(false);
+                view.showRefreshLayout(false);
             }
         });
     }

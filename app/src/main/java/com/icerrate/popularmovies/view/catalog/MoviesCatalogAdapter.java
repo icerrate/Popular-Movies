@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
 
     private OnItemClickListener onItemClickListener;
+
     private int columns;
 
     public MoviesCatalogAdapter(OnItemClickListener onItemClickListener, int columns) {

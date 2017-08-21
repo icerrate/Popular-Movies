@@ -2,6 +2,7 @@
     <string name="app_name">PopMovies</string>
 
     <string name="title_activity_movies">Pop Movies</string>
+    <string name="menu_sort">Sort</string>
     <string name="menu_sort_popular">Most Popular</string>
     <string name="menu_sort_top_rated">Highest Rated</string>
 

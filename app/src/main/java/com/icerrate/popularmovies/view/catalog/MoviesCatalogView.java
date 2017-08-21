@@ -12,5 +12,6 @@ import java.util.ArrayList;
 public interface MoviesCatalogView extends BaseView {
 
     void resetMovies();
+
     void showMovies(ArrayList<Movie> movies);
 }
