@@ -1,4 +1,4 @@
-package com.icerrate.popularmovies.view.catalog;
+package com.icerrate.popularmovies.view.movies;
 
 import android.os.Bundle;
 
@@ -16,6 +16,7 @@ public class MoviesCatalogActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_catalog);
         setTitle(getString(R.string.title_activity_movies));
+        setNavigationToolbar(false);
         if (savedInstanceState == null) {
             MoviesCatalogFragment moviesCatalogFragment = MoviesCatalogFragment.newInstance();
             replaceFragment(R.id.content, moviesCatalogFragment);

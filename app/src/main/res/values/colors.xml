@@ -2,10 +2,11 @@
 <resources>
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#E53935</color>
+    <color name="colorAccent">#009688</color>
 
     <color name="loading_background">#30000000</color>
-    <color name="footer_progress_background">#80000000</color>
+    <color name="footer_progress_background">#40000000</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 </resources>

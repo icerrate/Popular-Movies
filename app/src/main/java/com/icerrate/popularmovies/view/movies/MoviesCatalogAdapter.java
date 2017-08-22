@@ -1,4 +1,4 @@
-package com.icerrate.popularmovies.view.catalog;
+package com.icerrate.popularmovies.view.movies;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -55,7 +55,7 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
                     .placeholder(context.getResources().getDrawable(R.drawable.movie_placeholder))
                     .into(movieViewHolder.posterImageView);
 
-            movieViewHolder.posterImageView.setTag(movieViewHolder.posterImageView.getId(), movie);
+            movieViewHolder.itemView.setTag(movie);
         }
     }
 

@@ -3,10 +3,13 @@ package com.icerrate.popularmovies.view.common;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewStub;
+
+import com.icerrate.popularmovies.utils.DialogUtils;
 
 /**
  * Created by Ivan Cerrate
@@ -83,7 +86,7 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
     @Override
     public void showError(String errorMessage) {
-        //TODO: Show snackbar with error
+        DialogUtils.createSnackbar(getView(), errorMessage, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

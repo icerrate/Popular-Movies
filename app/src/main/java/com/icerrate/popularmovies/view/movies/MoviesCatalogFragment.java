@@ -1,4 +1,4 @@
-package com.icerrate.popularmovies.view.catalog;
+package com.icerrate.popularmovies.view.movies;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,10 +22,11 @@ import com.icerrate.popularmovies.data.source.MovieDataSource;
 import com.icerrate.popularmovies.provider.cloud.RetrofitModule;
 import com.icerrate.popularmovies.view.common.BaseFragment;
 import com.icerrate.popularmovies.view.common.EndlessRecyclerOnScrollListener;
+import com.icerrate.popularmovies.view.movies.detail.MovieDetailActivity;
 
 import java.util.ArrayList;
 
-import static com.icerrate.popularmovies.view.catalog.MoviesCatalogPresenter.SortType;
+import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.KEY_MOVIE;
 
 /**
  * Created by Ivan Cerrate.
@@ -39,13 +40,13 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
 
     private RecyclerView moviesRecyclerView;
 
-    private MoviesCatalogPresenter presenter;
-
     private MoviesCatalogAdapter adapter;
 
     private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
 
     protected ViewStub footerProgressBar;
+
+    private MoviesCatalogPresenter presenter;
 
     public static MoviesCatalogFragment newInstance() {
         return new MoviesCatalogFragment();
@@ -79,7 +80,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
             restoreInstanceState(savedInstanceState);
             presenter.loadMovies();
         } else {
-            presenter.setSortType(SortType.MOST_POPULAR);
+            presenter.setSortType(MoviesCatalogPresenter.SortType.MOST_POPULAR);
             presenter.refreshMovies();
         }
     }
@@ -87,11 +88,11 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_movies_catalog, menu);
-        SortType currentSortType = presenter.getSortType();
-        if (currentSortType.equals(SortType.MOST_POPULAR)) {
+        MoviesCatalogPresenter.SortType currentSortType = presenter.getSortType();
+        if (currentSortType.equals(MoviesCatalogPresenter.SortType.MOST_POPULAR)) {
             MenuItem item = menu.findItem(R.id.popular);
             item.setChecked(true);
-        } else if (currentSortType.equals(SortType.HIGHEST_RATED)) {
+        } else if (currentSortType.equals(MoviesCatalogPresenter.SortType.HIGHEST_RATED)) {
             MenuItem item = menu.findItem(R.id.top_rated);
             item.setChecked(true);
         }
@@ -101,11 +102,11 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.popular:
-                presenter.setSortType(SortType.MOST_POPULAR);
+                presenter.setSortType(MoviesCatalogPresenter.SortType.MOST_POPULAR);
                 presenter.refreshMovies();
                 break;
             case R.id.top_rated:
-                presenter.setSortType(SortType.HIGHEST_RATED);
+                presenter.setSortType(MoviesCatalogPresenter.SortType.HIGHEST_RATED);
                 presenter.refreshMovies();
                 break;
             default:
@@ -123,7 +124,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
 
     @Override
     protected void restoreInstanceState(Bundle savedState) {
-        SortType sortType = (SortType) savedState.getSerializable(KEY_SORT_TYPE);
+        MoviesCatalogPresenter.SortType sortType = (MoviesCatalogPresenter.SortType) savedState.getSerializable(KEY_SORT_TYPE);
         PaginatedResponse<Movie> moviesPaginatedResponse = savedState.getParcelable(KEY_PAGINATED_MOVIES);
         presenter.loadPresenterState(sortType, moviesPaginatedResponse);
     }
@@ -135,8 +136,6 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
         endlessRecyclerOnScrollListener = new EndlessRecyclerOnScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore() {
-                footerProgressBar.setVisibility(View.VISIBLE);
-                adapter.setLoading(true);
                 presenter.loadNextMoviesPage();
             }
         };
@@ -150,7 +149,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
                 presenter.onSwipeMovies();
             }
         });
-        refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
+        refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
     }
 
     private int getColumns() {
@@ -164,11 +163,11 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
 
     @Override
     public void onItemClick(View view) {
-        Movie movie = (Movie) view.getTag(view.getId());
-        /*if (movie != null) {
-            startActivity(MovieDetail.makeIntent(getContext())
-                    .putExtra(MOVIE_ID_KEY, movie.getId()));
-        }*/
+        Movie movie = (Movie) view.getTag();
+        if (movie != null) {
+            startActivity(MovieDetailActivity.makeIntent(getActivity())
+                    .putExtra(KEY_MOVIE, movie));
+        }
     }
 
     @Override
@@ -182,7 +181,11 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public void showMovies(ArrayList<Movie> movies) {
         adapter.addItems(movies);
         endlessRecyclerOnScrollListener.setLoading(false);
-        adapter.setLoading(false);
-        footerProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showFooterProgress(boolean show) {
+        adapter.setLoading(show);
+        footerProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }

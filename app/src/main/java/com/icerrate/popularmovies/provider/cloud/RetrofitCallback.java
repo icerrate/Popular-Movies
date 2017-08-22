@@ -5,6 +5,7 @@ import android.util.Log;
 import com.icerrate.popularmovies.view.common.BaseCallback;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +44,11 @@ public class RetrofitCallback<T> implements Callback<T>  {
     @Override
     public void onFailure(Call<T> call, Throwable t) {
         Log.d(TAG, "onFailure: " + t.getMessage());
-        callback.onFailure(t.getMessage());
+        if (t instanceof UnknownHostException) {
+            callback.onFailure("No internet connection");
+        } else {
+            callback.onFailure(t.getMessage());
+        }
     }
 
 }

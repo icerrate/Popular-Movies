@@ -1,4 +1,4 @@
-package com.icerrate.popularmovies.view.catalog;
+package com.icerrate.popularmovies.view.movies;
 
 import android.util.Log;
 
@@ -31,6 +31,7 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
     }
 
     public void loadNextMoviesPage() {
+        view.showFooterProgress(true);
         boolean isLastPage = moviesPaginatedResponse.isLastPage();
         if (!isLastPage) {
             getMovies(false);
@@ -79,6 +80,7 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
                 Log.e("PRESENTER - COUNT: ", String.valueOf(moviesPaginatedResponse.getResults().size()));
                 view.showMovies(response.getResults());
+                view.showFooterProgress(false);
                 view.showProgressBar(false);
                 view.showRefreshLayout(false);
             }
@@ -86,6 +88,7 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
+                view.showFooterProgress(false);
                 view.showProgressBar(false);
                 view.showRefreshLayout(false);
             }
@@ -107,6 +110,7 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
                 Log.e("PRESENTER - COUNT: ", String.valueOf(moviesPaginatedResponse.getResults().size()));
                 view.showMovies(response.getResults());
+                view.showFooterProgress(false);
                 view.showProgressBar(false);
                 view.showRefreshLayout(false);
             }
@@ -114,6 +118,7 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
+                view.showFooterProgress(false);
                 view.showProgressBar(false);
                 view.showRefreshLayout(false);
             }

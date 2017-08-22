@@ -17,6 +17,7 @@ import java.util.List;
 public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected static final int VIEW_TYPE_LOAD = 1;
+
     protected static final int VIEW_TYPE_DATA = 2;
 
     private boolean hasLoadingFooter = false;
@@ -105,5 +106,4 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<Recycl
         };
         handler.post(r);
     }
-
 }
