@@ -4,9 +4,9 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
 
-    def THE_MOVIE_DB_API_URL = "http://api.themoviedb.org"
-    def THE_MOVIE_DB_IMAGES_URL = "http://image.tmdb.org/t/p/"
-    def THE_MOVIE_DB_API_KEY = "API_KEY"
+    def THE_MOVIE_DB_API_URL = '"http://api.themoviedb.org"'
+    def THE_MOVIE_DB_IMAGES_URL = '"http://image.tmdb.org/t/p/"'
+    def THE_MOVIE_DB_API_KEY = '"API_KEY"'
 
     defaultConfig {
         applicationId "com.icerrate.popularmovies"
