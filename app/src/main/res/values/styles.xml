@@ -17,4 +17,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme.AppBarTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:layout_marginLeft">72dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+    </style>
+
+    <style name="SelectableCircularItem">
+        <item name="android:background">@drawable/selectable_circular_item</item>
+    </style>
+
 </resources>

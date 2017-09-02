@@ -1,7 +1,7 @@
 package com.icerrate.popularmovies.provider.cloud;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate
  */
 public interface BaseBaseService {
 

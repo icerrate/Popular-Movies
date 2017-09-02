@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MediaUtils {

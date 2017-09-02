@@ -9,8 +9,9 @@ import com.icerrate.popularmovies.BuildConfig;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate
  */
+
 public class Movie implements Parcelable {
 
     private int id;
@@ -67,6 +68,10 @@ public class Movie implements Parcelable {
 
     public String getPosterUrl(String size) {
         return BuildConfig.IMAGES_BASE_URL + size + posterPath;
+    }
+
+    public String getBackdropUrl(String size) {
+        return BuildConfig.IMAGES_BASE_URL + size + backdropPath;
     }
 
     public String getOriginalLanguage() {

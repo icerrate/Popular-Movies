@@ -1,7 +1,5 @@
 package com.icerrate.popularmovies.view.movies;
 
-import android.util.Log;
-
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.PaginatedResponse;
 import com.icerrate.popularmovies.data.source.MovieDataSource;
@@ -78,7 +76,6 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                         response.getTotalResults(),
                         response.getTotalPages());
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
-                Log.e("PRESENTER - COUNT: ", String.valueOf(moviesPaginatedResponse.getResults().size()));
                 view.showMovies(response.getResults());
                 view.showFooterProgress(false);
                 view.showProgressBar(false);
@@ -108,21 +105,22 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                         response.getTotalResults(),
                         response.getTotalPages());
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
-                Log.e("PRESENTER - COUNT: ", String.valueOf(moviesPaginatedResponse.getResults().size()));
                 view.showMovies(response.getResults());
-                view.showFooterProgress(false);
-                view.showProgressBar(false);
-                view.showRefreshLayout(false);
+                finishLoading();
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
-                view.showFooterProgress(false);
-                view.showProgressBar(false);
-                view.showRefreshLayout(false);
+                finishLoading();
             }
         });
+    }
+
+    private void finishLoading() {
+        view.showFooterProgress(false);
+        view.showProgressBar(false);
+        view.showRefreshLayout(false);
     }
 
     private void resetMovies() {

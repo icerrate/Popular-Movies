@@ -8,8 +8,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate
  */
+
 public class PaginatedResponse<T> implements Parcelable {
 
     private Integer page;

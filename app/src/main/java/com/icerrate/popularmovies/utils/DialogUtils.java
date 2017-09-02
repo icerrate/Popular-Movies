@@ -9,8 +9,9 @@ import android.view.View;
 import com.icerrate.popularmovies.R;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
+
 public class DialogUtils {
 
     public static AlertDialog createErrorDialog(final Activity activity, String errorMessage) {

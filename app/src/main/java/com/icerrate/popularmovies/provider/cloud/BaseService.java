@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate
  */
 public class BaseService implements BaseBaseService {
 

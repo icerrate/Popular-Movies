@@ -6,7 +6,7 @@ import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.view.common.BaseActivity;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate.
  */
 
 public class MoviesCatalogActivity extends BaseActivity {
@@ -16,7 +16,7 @@ public class MoviesCatalogActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_catalog);
         setTitle(getString(R.string.title_activity_movies));
-        setNavigationToolbar(false);
+        setNavigationToolbar(true);
         if (savedInstanceState == null) {
             MoviesCatalogFragment moviesCatalogFragment = MoviesCatalogFragment.newInstance();
             replaceFragment(R.id.content, moviesCatalogFragment);

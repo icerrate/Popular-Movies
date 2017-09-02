@@ -15,7 +15,7 @@ import com.icerrate.popularmovies.view.common.LoadMoreBaseAdapter;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate.
+ * @author by Ivan Cerrate.
  */
 
 public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
@@ -48,11 +48,11 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
             MovieViewHolder movieViewHolder = (MovieViewHolder) holder;
             Movie movie = data.get(position);
             Context context = holder.itemView.getContext();
-            String url = movie.getPosterUrl("w342");
+            String url = movie.getPosterUrl("w500");
 
             Glide.with(context)
                     .load(url)
-                    .placeholder(context.getResources().getDrawable(R.drawable.movie_placeholder))
+                    .placeholder(context.getResources().getDrawable(R.drawable.poster_placeholder))
                     .into(movieViewHolder.posterImageView);
 
             movieViewHolder.itemView.setTag(movie);
@@ -72,6 +72,7 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView posterImageView;
+
         private OnItemClickListener onItemClickListener;
 
         public MovieViewHolder(View itemView, OnItemClickListener onItemClickListener) {

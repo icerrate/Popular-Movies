@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import com.icerrate.popularmovies.R;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate.
  */
 
 public abstract class BaseActivity extends AppCompatActivity implements BaseFragmentListener {
@@ -52,8 +52,8 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseFrag
 
     @Override
     public void setTitle(String title) {
-        if (toolbar != null) {
-            toolbar.setTitle(title);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
         }
     }
 }

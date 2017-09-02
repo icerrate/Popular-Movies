@@ -12,7 +12,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate
  */
 public class RetrofitCallback<T> implements Callback<T>  {
 

@@ -3,7 +3,7 @@ package com.icerrate.popularmovies.provider.cloud;
 import com.icerrate.popularmovies.view.common.BaseCallback;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate
  */
 public abstract class ServiceRequest<T> {
 
