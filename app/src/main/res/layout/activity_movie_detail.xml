@@ -21,29 +21,14 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
 
-            <RelativeLayout
-                android:id="@+id/layout_image"
+            <ImageView
+                android:id="@+id/backdrop"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:layout_collapseMode="parallax">
-
-                <ImageView
-                    android:id="@+id/backdrop"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitXY"
-                    tools:src="@drawable/backdrop_placeholder" />
-
-                <ImageButton
-                    style="@style/SelectableCircularItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_play_video" />
-
-            </RelativeLayout>
+                android:scaleType="fitXY"
+                app:layout_collapseMode="parallax"
+                tools:src="@drawable/backdrop_placeholder" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -82,8 +67,7 @@
         <FrameLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:layout_height="match_parent" />
 
     </android.support.v4.widget.NestedScrollView>
 

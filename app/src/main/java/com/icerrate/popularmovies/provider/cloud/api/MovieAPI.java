@@ -2,6 +2,7 @@ package com.icerrate.popularmovies.provider.cloud.api;
 
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.PaginatedResponse;
+import com.icerrate.popularmovies.data.model.Review;
 import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.data.model.TrailersResponse;
 
@@ -24,4 +25,7 @@ public interface MovieAPI {
 
     @GET(ServerPaths.TRAILERS_MOVIES)
     Call<TrailersResponse<Trailer>> getMovieTrailers(@Path(ServerPaths.MOVIE_ID) Integer movieId);
+
+    @GET(ServerPaths.REVIEWS)
+    Call<PaginatedResponse<Review>> getMovieReviews(@Path(ServerPaths.MOVIE_ID) Integer movieId);
 }

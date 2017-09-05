@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="180dp"
-    android:layout_height="100dp"
+    android:layout_width="220dp"
+    android:layout_height="125dp"
     android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
@@ -12,6 +12,7 @@
         android:src="@color/placeholder_background"/>
 
     <ImageButton
+        android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_play_video"

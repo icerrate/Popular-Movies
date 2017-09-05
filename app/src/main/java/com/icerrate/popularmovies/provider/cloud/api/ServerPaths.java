@@ -16,4 +16,6 @@ public interface ServerPaths {
     String TOP_RATED_MOVIES = "/3/movie/top_rated/";
 
     String TRAILERS_MOVIES = "/3/movie/{" + MOVIE_ID + "}/videos";
+
+    String REVIEWS = "/3/movie/{" + MOVIE_ID + "}/reviews";
 }

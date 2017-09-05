@@ -28,4 +28,8 @@
         <item name="android:background">@drawable/selectable_circular_item</item>
     </style>
 
+    <style name="FlatButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
+
 </resources>

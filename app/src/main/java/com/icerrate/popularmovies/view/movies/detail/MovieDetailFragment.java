@@ -17,18 +17,23 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
+import com.icerrate.popularmovies.data.model.Review;
 import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.data.source.MovieDataSource;
 import com.icerrate.popularmovies.provider.cloud.RetrofitModule;
 import com.icerrate.popularmovies.view.common.BaseFragment;
+import com.icerrate.popularmovies.view.common.BaseItemDecoration;
 
 import java.util.ArrayList;
+
+import static com.icerrate.popularmovies.R.id.trailers;
 
 /**
  * Created by Ivan Cerrate.
  */
 
-public class MovieDetailFragment extends BaseFragment implements MovieDetailView, TrailersAdapter.OnItemClickListener {
+public class MovieDetailFragment extends BaseFragment implements MovieDetailView,
+        TrailersAdapter.OnItemClickListener, ReviewsAdapter.OnButtonClickListener {
 
     public static String KEY_MOVIE = "MOVIE_KEY";
 
@@ -45,6 +50,14 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     private RecyclerView trailersRecyclerView;
 
     private TrailersAdapter trailersAdapter;
+
+    private TextView trailersNoDataTextView;
+
+    private RecyclerView reviewsRecyclerView;
+
+    private ReviewsAdapter reviewsAdapter;
+
+    private TextView reviewsNoDataTextView;
 
     private MovieDetailPresenter presenter;
 
@@ -96,7 +109,10 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         releaseDateTextView = (TextView) view.findViewById(R.id.release_date);
         ratingTextView = (TextView) view.findViewById(R.id.rating);
         synopsisTextView = (TextView) view.findViewById(R.id.synopsis);
-        trailersRecyclerView = (RecyclerView) view.findViewById(R.id.trailers);
+        trailersRecyclerView = (RecyclerView) view.findViewById(trailers);
+        trailersNoDataTextView = (TextView) view.findViewById(R.id.trailers_no_data);
+        reviewsRecyclerView = (RecyclerView) view.findViewById(R.id.reviews);
+        reviewsNoDataTextView = (TextView) view.findViewById(R.id.reviews_no_data);
 
         return view;
     }
@@ -127,10 +143,26 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     private void setupView() {
         //Trailers
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL, false);
         trailersAdapter = new TrailersAdapter(this);
         trailersRecyclerView.setAdapter(trailersAdapter);
-        trailersRecyclerView.setLayoutManager(linearLayoutManager);
+        trailersRecyclerView.setLayoutManager(horizontalLayoutManager);
+        BaseItemDecoration mDividerItemDecoration = new BaseItemDecoration(
+                getContext().getResources().getDrawable(R.drawable.decorator_white));
+        trailersRecyclerView.addItemDecoration(mDividerItemDecoration);
+        trailersRecyclerView.setNestedScrollingEnabled(false);
+
+        //Reviews
+        LinearLayoutManager verticalLayoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
+        reviewsAdapter = new ReviewsAdapter(this);
+        reviewsRecyclerView.setAdapter(reviewsAdapter);
+        reviewsRecyclerView.setLayoutManager(verticalLayoutManager);
+        mDividerItemDecoration = new BaseItemDecoration(
+                getContext().getResources().getDrawable(R.drawable.decorator_gray));
+        reviewsRecyclerView.addItemDecoration(mDividerItemDecoration);
+        reviewsRecyclerView.setNestedScrollingEnabled(false);
     }
 
     @Override
@@ -139,6 +171,15 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         if (trailer != null) {
             startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse(trailer.getVideoUrl())));
+        }
+    }
+
+    @Override
+    public void onButtonClick(View view) {
+        Review review = (Review) view.getTag();
+        if (review != null) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(review.getUrl())));
         }
     }
 
@@ -162,7 +203,27 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     }
 
     @Override
+    public void showTrailersNoData(boolean show) {
+        trailersNoDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
     public void resetTrailers() {
         trailersAdapter.resetItems();
+    }
+
+    @Override
+    public void showReviews(ArrayList<Review> reviews) {
+        reviewsAdapter.addItems(reviews);
+    }
+
+    @Override
+    public void showReviewsNoData(boolean show) {
+        reviewsNoDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void resetReviews() {
+        reviewsAdapter.resetItems();
     }
 }

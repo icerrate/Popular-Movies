@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -32,7 +33,7 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 tools:text="Title" />
 
             <TextView
@@ -66,26 +67,80 @@
         android:layout_marginTop="16dp"
         tools:text="Synopsis" />
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/trailers_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/trailer_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textStyle="bold"
+            android:text="@string/trailers_title"
+            android:textColor="@color/colorPrimary"
             android:textSize="18sp"
-            android:text="@string/trailers_title" />
+            android:textStyle="bold" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/trailers"
-            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
+            android:layout_below="@+id/trailer_title"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_trailer" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/trailers_no_data"
+            android:layout_width="match_parent"
+            android:layout_height="?android:listPreferredItemHeight"
+            android:layout_below="@+id/trailer_title"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/trailers_no_data"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/reviews_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/reviews_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/reviews_title"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/reviews_title"
+            android:layout_marginTop="8dp"
+            tools:listitem="@layout/item_review" />
+
+        <TextView
+            android:id="@+id/reviews_no_data"
+            android:layout_width="match_parent"
+            android:layout_height="?android:listPreferredItemHeight"
+            android:layout_below="@+id/reviews_title"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/reviews_no_data"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 </LinearLayout>

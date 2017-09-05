@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -47,6 +48,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
                 .placeholder(context.getResources().getDrawable(R.drawable.poster_placeholder))
                 .into(viewHolder.thumbnailImageView);
         viewHolder.itemView.setTag(trailer);
+        viewHolder.playImageButton.setTag(trailer);
     }
 
     @Override public int getItemCount() {
@@ -67,13 +69,17 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
         public ImageView thumbnailImageView;
 
+        public ImageButton playImageButton;
+
         private OnItemClickListener onItemClickListener;
 
         public TrailerViewHolder(View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
             thumbnailImageView = (ImageView) itemView.findViewById(R.id.thumbnail);
+            playImageButton = (ImageButton) itemView.findViewById(R.id.play);
             this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
+            playImageButton.setOnClickListener(this);
         }
 
         @Override

@@ -1,12 +1,13 @@
 package com.icerrate.popularmovies.view.movies.detail;
 
+import com.icerrate.popularmovies.data.model.Review;
 import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.view.common.BaseView;
 
 import java.util.ArrayList;
 
 /**
- * @author by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public interface MovieDetailView extends BaseView {
@@ -15,5 +16,13 @@ public interface MovieDetailView extends BaseView {
 
     void showTrailers(ArrayList<Trailer> trailers);
 
+    void showTrailersNoData(boolean show);
+
     void resetTrailers();
+
+    void showReviews(ArrayList<Review> reviews);
+
+    void showReviewsNoData(boolean show);
+
+    void resetReviews();
 }

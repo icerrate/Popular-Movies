@@ -2,6 +2,7 @@ package com.icerrate.popularmovies.data.source;
 
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.PaginatedResponse;
+import com.icerrate.popularmovies.data.model.Review;
 import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.data.model.TrailersResponse;
 import com.icerrate.popularmovies.provider.cloud.BaseService;
@@ -39,6 +40,12 @@ public class MovieDataSource extends BaseService {
     public void getMovieTrailers(Integer movieId, BaseCallback<TrailersResponse<Trailer>> callback) {
         final Call<TrailersResponse<Trailer>> call = movieAPI.getMovieTrailers(movieId);
         ServiceRequest<TrailersResponse<Trailer>> serviceRequest = new ServerServiceRequest<>(call);
+        enqueue(serviceRequest, callback);
+    }
+
+    public void getMovieReviews(Integer movieId, BaseCallback<PaginatedResponse<Review>> callback) {
+        final Call<PaginatedResponse<Review>> call = movieAPI.getMovieReviews(movieId);
+        ServiceRequest<PaginatedResponse<Review>> serviceRequest = new ServerServiceRequest<>(call);
         enqueue(serviceRequest, callback);
     }
 }

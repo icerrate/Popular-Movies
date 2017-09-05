@@ -15,5 +15,8 @@
     <string name="title_activity_movie_detail">Movie Detail</string>
     <string name="rating">/10</string>
     <string name="trailers_title">Trailers</string>
-
+    <string name="reviews_title">Reviews</string>
+    <string name="review_on_web_button">View on Web</string>
+    <string name="trailers_no_data">No Trailers</string>
+    <string name="reviews_no_data">No Reviews</string>
 </resources>

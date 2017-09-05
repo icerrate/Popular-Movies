@@ -2,6 +2,8 @@ package com.icerrate.popularmovies.view.movies.detail;
 
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
+import com.icerrate.popularmovies.data.model.PaginatedResponse;
+import com.icerrate.popularmovies.data.model.Review;
 import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.data.model.TrailersResponse;
 import com.icerrate.popularmovies.data.source.MovieDataSource;
@@ -20,6 +22,8 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
     private Movie movie;
 
     private ArrayList<Trailer> trailers;
+
+    private ArrayList<Review> reviews;
 
     private MovieDataSource movieDataSource;
 
@@ -62,7 +66,15 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
                     resetTrailers();
                 }
                 trailers = response.getResults();
-                view.showTrailers(response.getResults());
+                if (trailers != null && !trailers.isEmpty()) {
+                    view.showTrailersNoData(false);
+                    view.showTrailers(response.getResults());
+                } else {
+                    view.showTrailersNoData(true);
+                }
+
+                //Next step
+                loadReviews();
             }
 
             @Override
@@ -74,6 +86,39 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
 
     private void resetTrailers() {
         view.resetTrailers();
+        trailers = new ArrayList<>();
+    }
+
+    public void loadReviews() {
+        resetReviews();
+        getInternalReviews(true);
+    }
+
+    private void getInternalReviews(final boolean force) {
+        movieDataSource.getMovieReviews(movie.getId(), new BaseCallback<PaginatedResponse<Review>>() {
+            @Override
+            public void onSuccess(PaginatedResponse<Review> response) {
+                if (force) {
+                    resetReviews();
+                }
+                reviews = response.getResults();
+                if (reviews != null && !reviews.isEmpty()) {
+                    view.showReviewsNoData(false);
+                    view.showReviews(response.getResults());
+                } else {
+                    view.showReviewsNoData(true);
+                }
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                view.showError(errorMessage);
+            }
+        });
+    }
+
+    private void resetReviews() {
+        view.resetReviews();
         trailers = new ArrayList<>();
     }
 
