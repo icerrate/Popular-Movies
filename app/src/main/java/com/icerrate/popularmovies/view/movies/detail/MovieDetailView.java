@@ -18,11 +18,7 @@ public interface MovieDetailView extends BaseView {
 
     void showTrailersNoData(boolean show);
 
-    void resetTrailers();
-
     void showReviews(ArrayList<Review> reviews);
 
     void showReviewsNoData(boolean show);
-
-    void resetReviews();
 }

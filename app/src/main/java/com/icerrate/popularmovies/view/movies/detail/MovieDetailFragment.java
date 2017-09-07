@@ -29,13 +29,17 @@ import java.util.ArrayList;
 import static com.icerrate.popularmovies.R.id.trailers;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MovieDetailFragment extends BaseFragment implements MovieDetailView,
         TrailersAdapter.OnItemClickListener, ReviewsAdapter.OnButtonClickListener {
 
     public static String KEY_MOVIE = "MOVIE_KEY";
+
+    public static String KEY_TRAILERS = "TRAILERS_KEY";
+
+    public static String KEY_REVIEWS = "REVIEWS_KEY";
 
     private ImageView posterImageView;
 
@@ -127,18 +131,22 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
             Movie movie = getArguments().getParcelable(KEY_MOVIE);
             presenter.setMovieDetail(movie);
         }
-        presenter.loadMovie();
+        presenter.loadView();
     }
 
     @Override
     protected void saveInstanceState(Bundle outState) {
         outState.putParcelable(KEY_MOVIE, presenter.getMovie());
+        outState.putParcelableArrayList(KEY_TRAILERS, presenter.getTrailers());
+        outState.putParcelableArrayList(KEY_REVIEWS, presenter.getReviews());
     }
 
     @Override
     protected void restoreInstanceState(Bundle savedState) {
         Movie movie = savedState.getParcelable(KEY_MOVIE);
-        presenter.loadPresenterState(movie);
+        ArrayList<Trailer> trailers = savedState.getParcelableArrayList(KEY_TRAILERS);
+        ArrayList<Review> reviews = savedState.getParcelableArrayList(KEY_REVIEWS);
+        presenter.loadPresenterState(movie, trailers, reviews);
     }
 
     private void setupView() {
@@ -152,7 +160,6 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
                 getContext().getResources().getDrawable(R.drawable.decorator_white));
         trailersRecyclerView.addItemDecoration(mDividerItemDecoration);
         trailersRecyclerView.setNestedScrollingEnabled(false);
-
         //Reviews
         LinearLayoutManager verticalLayoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
@@ -208,11 +215,6 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     }
 
     @Override
-    public void resetTrailers() {
-        trailersAdapter.resetItems();
-    }
-
-    @Override
     public void showReviews(ArrayList<Review> reviews) {
         reviewsAdapter.addItems(reviews);
     }
@@ -220,10 +222,5 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     @Override
     public void showReviewsNoData(boolean show) {
         reviewsNoDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void resetReviews() {
-        reviewsAdapter.resetItems();
     }
 }

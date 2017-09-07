@@ -54,27 +54,19 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
     }
 
     public void loadTrailers() {
-        resetTrailers();
-        getInternalTrailers(true);
+        if (trailers == null) {
+            getInternalTrailers();
+        } else {
+            showTrailers(trailers);
+        }
     }
 
-    private void getInternalTrailers(final boolean force) {
+    private void getInternalTrailers() {
         movieDataSource.getMovieTrailers(movie.getId(), new BaseCallback<TrailersResponse<Trailer>>() {
             @Override
             public void onSuccess(TrailersResponse<Trailer> response) {
-                if (force) {
-                    resetTrailers();
-                }
                 trailers = response.getResults();
-                if (trailers != null && !trailers.isEmpty()) {
-                    view.showTrailersNoData(false);
-                    view.showTrailers(response.getResults());
-                } else {
-                    view.showTrailersNoData(true);
-                }
-
-                //Next step
-                loadReviews();
+                showTrailers(trailers);
             }
 
             @Override
@@ -84,23 +76,30 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         });
     }
 
-    private void resetTrailers() {
-        view.resetTrailers();
-        trailers = new ArrayList<>();
+    private void showTrailers(ArrayList<Trailer> trailers) {
+        if (trailers != null && !trailers.isEmpty()) {
+            view.showTrailersNoData(false);
+            view.showTrailers(trailers);
+        } else {
+            view.showTrailersNoData(true);
+        }
+
+        //Next step
+        loadReviews();
     }
 
     public void loadReviews() {
-        resetReviews();
-        getInternalReviews(true);
+        if (reviews == null) {
+            getInternalReviews();
+        } else {
+            showReviews(reviews);
+        }
     }
 
-    private void getInternalReviews(final boolean force) {
+    private void getInternalReviews() {
         movieDataSource.getMovieReviews(movie.getId(), new BaseCallback<PaginatedResponse<Review>>() {
             @Override
             public void onSuccess(PaginatedResponse<Review> response) {
-                if (force) {
-                    resetReviews();
-                }
                 reviews = response.getResults();
                 if (reviews != null && !reviews.isEmpty()) {
                     view.showReviewsNoData(false);
@@ -117,9 +116,13 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         });
     }
 
-    private void resetReviews() {
-        view.resetReviews();
-        trailers = new ArrayList<>();
+    private void showReviews(ArrayList<Review> reviews) {
+        if (reviews != null && !reviews.isEmpty()) {
+            view.showReviewsNoData(false);
+            view.showReviews(reviews);
+        } else {
+            view.showReviewsNoData(true);
+        }
     }
 
     // State
@@ -128,7 +131,17 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         return movie;
     }
 
-    public void loadPresenterState(Movie movie) {
+    public ArrayList<Trailer> getTrailers() {
+        return trailers;
+    }
+
+    public ArrayList<Review> getReviews() {
+        return reviews;
+    }
+
+    public void loadPresenterState(Movie movie, ArrayList<Trailer> trailers, ArrayList<Review> reviews) {
         this.movie = movie;
+        this.trailers = trailers;
+        this.reviews = reviews;
     }
 }
