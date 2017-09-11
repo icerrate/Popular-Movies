@@ -1,10 +1,13 @@
 package com.icerrate.popularmovies.view.movies;
 
+import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.PaginatedResponse;
-import com.icerrate.popularmovies.data.source.MovieDataSource;
+import com.icerrate.popularmovies.data.source.MovieRepository;
 import com.icerrate.popularmovies.view.common.BaseCallback;
 import com.icerrate.popularmovies.view.common.BasePresenter;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ivan Cerrate.
@@ -14,18 +17,19 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
 
     public enum SortType {
         MOST_POPULAR,
-        HIGHEST_RATED
+        HIGHEST_RATED,
+        FAVORITE
     }
 
     private SortType sortType;
 
     private PaginatedResponse<Movie> moviesPaginatedResponse = new PaginatedResponse<>();
 
-    private MovieDataSource movieDataSource;
+    private MovieRepository movieRepository;
 
-    public MoviesCatalogPresenter(MoviesCatalogView view, MovieDataSource movieDataSource) {
+    public MoviesCatalogPresenter(MoviesCatalogView view, MovieRepository movieRepository) {
         super(view);
-        this.movieDataSource = movieDataSource;
+        this.movieRepository = movieRepository;
     }
 
     public void loadNextMoviesPage() {
@@ -33,6 +37,8 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
         boolean isLastPage = moviesPaginatedResponse.isLastPage();
         if (!isLastPage) {
             getMovies(false);
+        } else {
+            view.showFooterProgress(false);
         }
     }
 
@@ -60,12 +66,15 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
             case HIGHEST_RATED:
                 getInternalTopRatedMovies(force);
                 break;
+            case FAVORITE:
+                getInternalFavoriteMovies(force);
+                break;
         }
     }
 
     private void getInternalPopularMovies(final boolean force) {
         Integer currentPage = moviesPaginatedResponse.getPage() != null ? moviesPaginatedResponse.getPage()+1 : 1;
-        movieDataSource.getPopularMovie(currentPage, new BaseCallback<PaginatedResponse<Movie>>() {
+        movieRepository.getPopularMovies(currentPage, new BaseCallback<PaginatedResponse<Movie>>() {
             @Override
             public void onSuccess(PaginatedResponse<Movie> response) {
                 if (force) {
@@ -76,25 +85,24 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                         response.getTotalResults(),
                         response.getTotalPages());
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
-                view.showMovies(response.getResults());
-                view.showFooterProgress(false);
-                view.showProgressBar(false);
-                view.showRefreshLayout(false);
+                showMovies(response.getResults(), getStringRes(R.string.movies_no_data));
+                finishLoading();
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
-                view.showFooterProgress(false);
-                view.showProgressBar(false);
-                view.showRefreshLayout(false);
+                if (moviesPaginatedResponse.getResults().isEmpty()) {
+                    view.showNoDataView(true, getStringRes(R.string.movies_no_data));
+                }
+                finishLoading();
             }
         });
     }
 
     private void getInternalTopRatedMovies(final boolean force) {
         Integer currentPage = moviesPaginatedResponse.getPage() != null ? moviesPaginatedResponse.getPage()+1 : 1;
-        movieDataSource.getTopRatedMovie(currentPage, new BaseCallback<PaginatedResponse<Movie>>() {
+        movieRepository.getTopRatedMovies(currentPage, new BaseCallback<PaginatedResponse<Movie>>() {
             @Override
             public void onSuccess(PaginatedResponse<Movie> response) {
                 if (force) {
@@ -105,16 +113,54 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                         response.getTotalResults(),
                         response.getTotalPages());
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
-                view.showMovies(response.getResults());
+                showMovies(response.getResults(), getStringRes(R.string.movies_no_data));
                 finishLoading();
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
+                if (moviesPaginatedResponse.getResults().isEmpty()) {
+                    view.showNoDataView(true, getStringRes(R.string.movies_no_data));
+                }
                 finishLoading();
             }
         });
+    }
+
+    private void getInternalFavoriteMovies(final boolean force) {
+        movieRepository.getFavoriteMovies(new BaseCallback<ArrayList<Movie>>() {
+            @Override
+            public void onSuccess(ArrayList<Movie> response) {
+                if (force) {
+                    resetMovies();
+                }
+                moviesPaginatedResponse.setMeta(1, response.size(), 1);
+                moviesPaginatedResponse.getResults().addAll(response);
+                showMovies(response, getStringRes(R.string.movies_no_data));
+                finishLoading();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                view.showError(errorMessage);
+                if (moviesPaginatedResponse.getResults().isEmpty()) {
+                    view.showNoDataView(true, getStringRes(R.string.movies_no_data));
+                }
+                finishLoading();
+            }
+        });
+    }
+
+    public void showMovies(ArrayList<Movie> movies, String noDataText) {
+        if (movies != null && !movies.isEmpty()) {
+            view.showNoDataView(false, null);
+            view.showMovies(movies);
+        } else {
+            if (moviesPaginatedResponse.getResults().isEmpty()) {
+                view.showNoDataView(true, noDataText);
+            }
+        }
     }
 
     private void finishLoading() {
@@ -126,6 +172,21 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
     private void resetMovies() {
         view.resetMovies();
         moviesPaginatedResponse = new PaginatedResponse<>();
+    }
+
+    public void onMovieItemClick(final Movie movie) {
+        movieRepository.isFavoriteMovie(movie.getId(), new BaseCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean isFavorite) {
+                movie.setFavorite(isFavorite);
+                view.goToMovieDetail(movie);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+
+            }
+        });
     }
 
     public void setSortType(SortType sortType) {

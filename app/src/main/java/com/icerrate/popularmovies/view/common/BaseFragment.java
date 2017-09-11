@@ -89,6 +89,12 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         DialogUtils.createSnackbar(getView(), errorMessage, Snackbar.LENGTH_SHORT).show();
     }
 
+
+    @Override
+    public void showSnackbarMessage(String message) {
+        DialogUtils.createSnackbar(getView(), message, Snackbar.LENGTH_SHORT).show();
+    }
+
     @Override
     public Context getContext() {
         return getActivity();

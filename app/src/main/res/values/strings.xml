@@ -11,6 +11,8 @@
     <string name="menu_sort">Sort</string>
     <string name="menu_sort_popular">Most Popular</string>
     <string name="menu_sort_top_rated">Highest Rated</string>
+    <string name="menu_sort_favorite">Favorites</string>
+    <string name="movies_no_data">No Movies Found</string>
 
     <string name="title_activity_movie_detail">Movie Detail</string>
     <string name="rating">/10</string>
@@ -19,4 +21,6 @@
     <string name="review_on_web_button">View on Web</string>
     <string name="trailers_no_data">No Trailers</string>
     <string name="reviews_no_data">No Reviews</string>
+    <string name="favorite_added">Added to favorites</string>
+    <string name="favorite_removed">Removed from favorites</string>
 </resources>

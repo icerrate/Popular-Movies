@@ -13,4 +13,6 @@ public interface BaseFragmentListener {
     void replaceFragment(int containerId, Fragment fragment);
 
     void setTitle(String title);
+
+    void showSnackbar(String message);
 }

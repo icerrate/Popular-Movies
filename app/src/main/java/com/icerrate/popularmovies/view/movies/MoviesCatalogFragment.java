@@ -1,5 +1,7 @@
 package com.icerrate.popularmovies.view.movies;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,12 +16,12 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.TextView;
 
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.PaginatedResponse;
-import com.icerrate.popularmovies.data.source.MovieDataSource;
-import com.icerrate.popularmovies.provider.cloud.RetrofitModule;
+import com.icerrate.popularmovies.utils.InjectionUtils;
 import com.icerrate.popularmovies.view.common.BaseFragment;
 import com.icerrate.popularmovies.view.common.EndlessRecyclerOnScrollListener;
 import com.icerrate.popularmovies.view.movies.detail.MovieDetailActivity;
@@ -34,11 +36,15 @@ import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.
 
 public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalogView, MoviesCatalogAdapter.OnItemClickListener {
 
+    public static int RC_MOVIE_DETAIL = 25;
+
     public static String KEY_SORT_TYPE = "SORT_TYPE_KEY";
 
     public static String KEY_PAGINATED_MOVIES = "PAGINATED_MOVIES_KEY";
 
     private RecyclerView moviesRecyclerView;
+
+    private TextView noDataTextView;
 
     private MoviesCatalogAdapter adapter;
 
@@ -56,7 +62,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new MoviesCatalogPresenter(this,
-                new MovieDataSource(RetrofitModule.get().provideMovieAPI()));
+                InjectionUtils.movieRepository(getContext()));
     }
 
     @Override
@@ -67,6 +73,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         progressBar = (ViewStub) view.findViewById(R.id.progress);
         moviesRecyclerView = (RecyclerView) view.findViewById(R.id.movies);
+        noDataTextView = (TextView) view.findViewById(R.id.no_data);
         footerProgressBar = (ViewStub) view.findViewById(R.id.footer_progress);
 
         return view;
@@ -95,6 +102,9 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
         } else if (currentSortType.equals(MoviesCatalogPresenter.SortType.HIGHEST_RATED)) {
             MenuItem item = menu.findItem(R.id.top_rated);
             item.setChecked(true);
+        } else if (currentSortType.equals(MoviesCatalogPresenter.SortType.FAVORITE)) {
+            MenuItem item = menu.findItem(R.id.favorite);
+            item.setChecked(true);
         }
     }
 
@@ -107,6 +117,10 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
                 break;
             case R.id.top_rated:
                 presenter.setSortType(MoviesCatalogPresenter.SortType.HIGHEST_RATED);
+                presenter.refreshMovies();
+                break;
+            case R.id.favorite:
+                presenter.setSortType(MoviesCatalogPresenter.SortType.FAVORITE);
                 presenter.refreshMovies();
                 break;
             default:
@@ -162,11 +176,20 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_MOVIE_DETAIL && resultCode == Activity.RESULT_OK) {
+            if (presenter.getSortType().equals(MoviesCatalogPresenter.SortType.FAVORITE)) {
+                presenter.refreshMovies();
+            }
+        }
+    }
+
+    @Override
     public void onItemClick(View view) {
         Movie movie = (Movie) view.getTag();
         if (movie != null) {
-            startActivity(MovieDetailActivity.makeIntent(getActivity())
-                    .putExtra(KEY_MOVIE, movie));
+            presenter.onMovieItemClick(movie);
         }
     }
 
@@ -187,5 +210,17 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public void showFooterProgress(boolean show) {
         adapter.setLoading(show);
         footerProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showNoDataView(boolean show, String noDataText) {
+        noDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+        noDataTextView.setText(noDataText);
+    }
+
+    @Override
+    public void goToMovieDetail(Movie movie) {
+        startActivityForResult(MovieDetailActivity.makeIntent(getActivity())
+                .putExtra(KEY_MOVIE, movie), RC_MOVIE_DETAIL);
     }
 }

@@ -6,7 +6,7 @@ import com.icerrate.popularmovies.data.model.PaginatedResponse;
 import com.icerrate.popularmovies.data.model.Review;
 import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.data.model.TrailersResponse;
-import com.icerrate.popularmovies.data.source.MovieDataSource;
+import com.icerrate.popularmovies.data.source.MovieRepository;
 import com.icerrate.popularmovies.utils.FormatUtils;
 import com.icerrate.popularmovies.view.common.BaseCallback;
 import com.icerrate.popularmovies.view.common.BasePresenter;
@@ -25,11 +25,11 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
 
     private ArrayList<Review> reviews;
 
-    private MovieDataSource movieDataSource;
+    private MovieRepository movieRepository;
 
-    public MovieDetailPresenter(MovieDetailView view, MovieDataSource movieDataSource) {
+    public MovieDetailPresenter(MovieDetailView view, MovieRepository movieRepository) {
         super(view);
-        this.movieDataSource = movieDataSource;
+        this.movieRepository = movieRepository;
     }
 
     public void setMovieDetail(Movie movie) {
@@ -48,9 +48,12 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         String backdropUrl = movie.getBackdropUrl("w780");
         String rating = movie.getVoteAverage() + getStringRes(R.string.rating);
         String synopsis = movie.getOverview();
+        boolean isFavorite = movie.isFavorite();
         view.showMovieDetail(title, releaseDate, posterUrl, backdropUrl, rating, synopsis);
-        //Next step
+        view.updateFavoriteIcon(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
+        //Next steps
         loadTrailers();
+        loadReviews();
     }
 
     public void loadTrailers() {
@@ -62,7 +65,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
     }
 
     private void getInternalTrailers() {
-        movieDataSource.getMovieTrailers(movie.getId(), new BaseCallback<TrailersResponse<Trailer>>() {
+        movieRepository.getMovieTrailers(movie.getId(), new BaseCallback<TrailersResponse<Trailer>>() {
             @Override
             public void onSuccess(TrailersResponse<Trailer> response) {
                 trailers = response.getResults();
@@ -72,6 +75,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
+                view.showTrailersNoData(true);
             }
         });
     }
@@ -83,9 +87,6 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         } else {
             view.showTrailersNoData(true);
         }
-
-        //Next step
-        loadReviews();
     }
 
     public void loadReviews() {
@@ -97,7 +98,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
     }
 
     private void getInternalReviews() {
-        movieDataSource.getMovieReviews(movie.getId(), new BaseCallback<PaginatedResponse<Review>>() {
+        movieRepository.getMovieReviews(movie.getId(), new BaseCallback<PaginatedResponse<Review>>() {
             @Override
             public void onSuccess(PaginatedResponse<Review> response) {
                 reviews = response.getResults();
@@ -112,6 +113,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
+                view.showReviewsNoData(true);
             }
         });
     }
@@ -122,6 +124,41 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
             view.showReviews(reviews);
         } else {
             view.showReviewsNoData(true);
+        }
+    }
+
+    public void onFavoriteFabClicked() {
+        boolean isFavorite = movie.isFavorite();
+        if (isFavorite) {
+            movieRepository.removeFavoriteMovie(movie.getId(), new BaseCallback<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    movie.setFavorite(false);
+                    view.notifyUpdate();
+                    view.updateFavoriteIcon(R.drawable.ic_favorite_border);
+                    view.showSnackbarMessage(getStringRes(R.string.favorite_removed));
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+
+                }
+            });
+        } else {
+            movieRepository.addFavoriteMovie(movie, new BaseCallback<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    movie.setFavorite(true);
+                    view.notifyUpdate();
+                    view.updateFavoriteIcon(R.drawable.ic_favorite);
+                    view.showSnackbarMessage(getStringRes(R.string.favorite_added));
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+
+                }
+            });
         }
     }
 

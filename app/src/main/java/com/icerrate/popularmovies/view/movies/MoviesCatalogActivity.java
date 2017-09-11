@@ -16,7 +16,7 @@ public class MoviesCatalogActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_catalog);
         setTitle(getString(R.string.title_activity_movies));
-        setNavigationToolbar(true);
+        setNavigationToolbar(false);
         if (savedInstanceState == null) {
             MoviesCatalogFragment moviesCatalogFragment = MoviesCatalogFragment.newInstance();
             replaceFragment(R.id.content, moviesCatalogFragment);

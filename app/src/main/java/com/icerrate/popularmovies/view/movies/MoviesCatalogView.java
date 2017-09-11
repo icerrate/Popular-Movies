@@ -15,5 +15,9 @@ public interface MoviesCatalogView extends BaseView {
 
     void showMovies(ArrayList<Movie> movies);
 
+    void showNoDataView(boolean show, String noDataText);
+
     void showFooterProgress(boolean show);
+
+    void goToMovieDetail(Movie movie);
 }

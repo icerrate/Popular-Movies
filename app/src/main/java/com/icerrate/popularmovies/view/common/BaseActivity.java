@@ -56,4 +56,9 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseFrag
             getSupportActionBar().setTitle(title);
         }
     }
+
+    @Override
+    public void showSnackbar(String message) {
+
+    }
 }

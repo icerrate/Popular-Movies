@@ -16,5 +16,5 @@
     <color name="divider">#ebf2f5</color>
     <color name="black_alpha">#80000000</color>
 
-    <color name="fragment_background">#eaeaea</color>
+    <color name="catalog_background">#505050</color>
 </resources>

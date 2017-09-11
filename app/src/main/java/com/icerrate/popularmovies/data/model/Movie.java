@@ -37,6 +37,7 @@ public class Movie implements Parcelable {
     private String overview;
     @SerializedName("release_date")
     private String releaseDate;
+    private boolean favorite;
 
     public int getId() {
         return id;
@@ -102,6 +103,24 @@ public class Movie implements Parcelable {
         return releaseDate;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    public Movie(int id, String title, String posterPath, String backdropPath, String overview, double voteAverage, String releaseDate) {
+        this.id = id;
+        this.title = title;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
+        this.overview = overview;
+        this.voteAverage = voteAverage;
+        this.releaseDate = releaseDate;
+    }
+
     protected Movie(Parcel in) {
         id = in.readInt();
         voteCount = in.readInt();
@@ -122,6 +141,7 @@ public class Movie implements Parcelable {
         adult = in.readByte() != 0;
         overview = in.readString();
         releaseDate = in.readString();
+        favorite = in.readByte() != 0;
     }
 
     @Override
@@ -150,6 +170,7 @@ public class Movie implements Parcelable {
         dest.writeByte((byte) (adult ? 1 : 0));
         dest.writeString(overview);
         dest.writeString(releaseDate);
+        dest.writeByte((byte) (favorite ? 1 : 0));
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

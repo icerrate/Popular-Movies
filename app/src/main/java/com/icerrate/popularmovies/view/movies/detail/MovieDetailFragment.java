@@ -19,8 +19,7 @@ import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.Review;
 import com.icerrate.popularmovies.data.model.Trailer;
-import com.icerrate.popularmovies.data.source.MovieDataSource;
-import com.icerrate.popularmovies.provider.cloud.RetrofitModule;
+import com.icerrate.popularmovies.utils.InjectionUtils;
 import com.icerrate.popularmovies.view.common.BaseFragment;
 import com.icerrate.popularmovies.view.common.BaseItemDecoration;
 
@@ -101,7 +100,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new MovieDetailPresenter(this,
-                new MovieDataSource(RetrofitModule.get().provideMovieAPI()));
+                InjectionUtils.movieRepository(getContext()));
     }
 
     @Override
@@ -194,6 +193,12 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public void showMovieDetail(String title, String releaseDate, String posterUrl, String backdropUrl, String rating, String synopsis) {
         movieDetailFragmentListener.setBackdropImage(backdropUrl);
         movieDetailFragmentListener.setCollapsingTitle(title);
+        movieDetailFragmentListener.setFavoriteOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onFavoriteFabClicked();
+            }
+        });
         titleDateTextView.setText(title);
         Glide.with(this)
                 .load(posterUrl)
@@ -202,6 +207,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         releaseDateTextView.setText(releaseDate);
         ratingTextView.setText(rating);
         synopsisTextView.setText(synopsis);
+
     }
 
     @Override
@@ -222,5 +228,15 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     @Override
     public void showReviewsNoData(boolean show) {
         reviewsNoDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void updateFavoriteIcon(int iconId) {
+        movieDetailFragmentListener.updateFavoriteIcon(iconId);
+    }
+
+    @Override
+    public void notifyUpdate() {
+        movieDetailFragmentListener.notifyUpdate();
     }
 }

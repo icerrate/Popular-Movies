@@ -24,6 +24,9 @@
             android:label="@string/title_activity_movie_detail"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <provider
+            android:name=".provider.db.MovieContentProvider"
+            android:authorities="com.icerrate.popularmovies.provider.db"/>
     </application>
 
 </manifest>

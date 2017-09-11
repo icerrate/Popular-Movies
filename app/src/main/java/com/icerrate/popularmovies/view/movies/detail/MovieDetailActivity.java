@@ -1,10 +1,13 @@
 package com.icerrate.popularmovies.view.movies.detail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
@@ -31,6 +34,10 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
 
     private TextView titleTextView;
 
+    private FloatingActionButton favoriteFab;
+
+    private Integer result;
+
     public static Intent makeIntent(Context context){
         return new Intent(context, MovieDetailActivity.class);
     }
@@ -51,6 +58,25 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         titleLayout = findViewById(R.id.layout_title);
         titleTextView = (TextView) findViewById(R.id.title);
+        favoriteFab = (FloatingActionButton) findViewById(R.id.favorite);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (result != null) {
+            setResult(result);
+        }
+        finish();
     }
 
     @Override
@@ -107,5 +133,20 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
                 .load(backdropUrl)
                 .placeholder(getResources().getDrawable(R.drawable.poster_placeholder))
                 .into(backdropImageView);
+    }
+
+    @Override
+    public void setFavoriteOnClickListener(View.OnClickListener onClickListener) {
+        favoriteFab.setOnClickListener(onClickListener);
+    }
+
+    @Override
+    public void updateFavoriteIcon(int icon) {
+        favoriteFab.setImageResource(icon);
+    }
+
+    @Override
+    public void notifyUpdate() {
+        result = Activity.RESULT_OK;
     }
 }

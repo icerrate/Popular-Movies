@@ -21,4 +21,8 @@ public interface MovieDetailView extends BaseView {
     void showReviews(ArrayList<Review> reviews);
 
     void showReviewsNoData(boolean show);
+
+    void updateFavoriteIcon(int iconId);
+
+    void notifyUpdate();
 }

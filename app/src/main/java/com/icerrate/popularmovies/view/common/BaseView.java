@@ -14,5 +14,7 @@ public interface BaseView {
 
     void showError(String errorMessage);
 
+    void showSnackbarMessage(String message);
+
     Context getContext();
 }
