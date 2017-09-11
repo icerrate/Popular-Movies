@@ -75,6 +75,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
+                view.showShareMenu(false);
                 view.showTrailersNoData(true);
             }
         });
@@ -84,8 +85,10 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         if (trailers != null && !trailers.isEmpty()) {
             view.showTrailersNoData(false);
             view.showTrailers(trailers);
+            view.showShareMenu(true);
         } else {
             view.showTrailersNoData(true);
+            view.showShareMenu(false);
         }
     }
 
@@ -159,6 +162,12 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
 
                 }
             });
+        }
+    }
+
+    public void onShareClick() {
+        if (trailers != null && !trailers.isEmpty()) {
+            view.prepareTrailerShare(trailers.get(0).getVideoUrl());
         }
     }
 

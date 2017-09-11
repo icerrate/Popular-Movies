@@ -9,6 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -62,6 +65,8 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     private TextView reviewsNoDataTextView;
 
+    private MenuItem shareMenuItem;
+
     private MovieDetailPresenter presenter;
 
     private MovieDetailFragmentListener movieDetailFragmentListener;
@@ -105,6 +110,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
         posterImageView = (ImageView) view.findViewById(R.id.poster);
@@ -133,6 +139,22 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         presenter.loadView();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_movie_detail, menu);
+        shareMenuItem = menu.getItem(0);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.share:
+                presenter.onShareClick();
+                return true;
+            default:
+                return false;
+        }
+    }
     @Override
     protected void saveInstanceState(Bundle outState) {
         outState.putParcelable(KEY_MOVIE, presenter.getMovie());
@@ -238,5 +260,20 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     @Override
     public void notifyUpdate() {
         movieDetailFragmentListener.notifyUpdate();
+    }
+
+    @Override
+    public void prepareTrailerShare(String trailerUrl) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, trailerUrl);
+        startActivity(Intent.createChooser(shareIntent, "Share Trailer link using"));
+    }
+
+    @Override
+    public void showShareMenu(boolean show) {
+        if (shareMenuItem != null) {
+            shareMenuItem.setVisible(show);
+        }
     }
 }

@@ -25,4 +25,8 @@ public interface MovieDetailView extends BaseView {
     void updateFavoriteIcon(int iconId);
 
     void notifyUpdate();
+
+    void prepareTrailerShare(String trailerUrl);
+
+    void showShareMenu(boolean show);
 }
