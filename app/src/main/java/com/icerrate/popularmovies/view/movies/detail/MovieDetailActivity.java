@@ -87,58 +87,64 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
 
     @Override
     public void setCollapsingTitle(final String title) {
-        titleTextView.setText(title);
-        titleLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                CollapsingToolbarLayout.LayoutParams layoutParams = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
-                layoutParams.height = titleLayout.getHeight();
-                toolbar.setLayoutParams(layoutParams);
-            }
-        });
-
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = false;
-            boolean animatedIn = false;
-            boolean animatedOut = false;
-            int scrollRange = -1;
-            AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ;
-            AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.0f ) ;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
+        if (titleTextView != null) {
+            titleTextView.setText(title);
+            titleLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    CollapsingToolbarLayout.LayoutParams layoutParams = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
+                    layoutParams.height = titleLayout.getHeight();
+                    toolbar.setLayoutParams(layoutParams);
                 }
-                if (scrollRange + verticalOffset < 100) {
-                    if (!animatedIn) {
-                        fadeIn.setDuration(350);
-                        fadeIn.setFillAfter(true);
-                        titleTextView.startAnimation(fadeIn);
-                        animatedIn = true;
-                        animatedOut = false;
+            });
+
+            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                boolean isShow = false;
+                boolean animatedIn = false;
+                boolean animatedOut = false;
+                int scrollRange = -1;
+                AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ;
+                AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.0f ) ;
+
+                @Override
+                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                    if (scrollRange == -1) {
+                        scrollRange = appBarLayout.getTotalScrollRange();
                     }
-                    isShow = true;
-                } else if (isShow) {
-                    if (!animatedOut) {
-                        fadeOut.setDuration(350);
-                        fadeOut.setFillAfter(true);
-                        titleTextView.startAnimation(fadeOut);
-                        animatedOut = true;
-                        animatedIn = false;
+                    if (scrollRange + verticalOffset < 100) {
+                        if (!animatedIn) {
+                            fadeIn.setDuration(350);
+                            fadeIn.setFillAfter(true);
+                            titleTextView.startAnimation(fadeIn);
+                            animatedIn = true;
+                            animatedOut = false;
+                        }
+                        isShow = true;
+                    } else if (isShow) {
+                        if (!animatedOut) {
+                            fadeOut.setDuration(350);
+                            fadeOut.setFillAfter(true);
+                            titleTextView.startAnimation(fadeOut);
+                            animatedOut = true;
+                            animatedIn = false;
+                        }
+                        isShow = false;
                     }
-                    isShow = false;
                 }
-            }
-        });
+            });
+        } else {
+            toolbar.setTitle(title);
+        }
     }
 
     @Override
     public void setBackdropImage(String backdropUrl) {
-        Glide.with(this)
-                .load(backdropUrl)
-                .placeholder(getResources().getDrawable(R.drawable.poster_placeholder))
-                .into(backdropImageView);
+        if (backdropImageView != null) {
+            Glide.with(this)
+                    .load(backdropUrl)
+                    .placeholder(getResources().getDrawable(R.drawable.poster_placeholder))
+                    .into(backdropImageView);
+        }
     }
 
     @Override

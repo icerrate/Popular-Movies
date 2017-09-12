@@ -18,6 +18,9 @@ out/
 .gradle/
 build/
 
+# Mac files
+.DS_Store
+
 # Local configuration file (sdk path, etc)
 local.properties
 project.properties
