@@ -11,7 +11,7 @@ import com.icerrate.popularmovies.R;
 import java.util.List;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

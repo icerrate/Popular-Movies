@@ -10,7 +10,7 @@ import com.icerrate.popularmovies.view.common.BasePresenter;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {

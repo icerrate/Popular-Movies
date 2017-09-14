@@ -5,8 +5,9 @@ import com.icerrate.popularmovies.view.common.BaseCallback;
 import retrofit2.Call;
 
 /**
- * @author Ivan Cerrate
+ * @author Ivan Cerrate.
  */
+
 public class ServerServiceRequest<T> extends ServiceRequest<T> {
 
     private Call<T> call;

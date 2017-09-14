@@ -10,7 +10,7 @@ import com.icerrate.popularmovies.view.common.BaseCallback;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public interface MovieDataSource {

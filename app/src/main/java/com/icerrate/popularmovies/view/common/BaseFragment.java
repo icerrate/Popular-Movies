@@ -12,7 +12,7 @@ import android.view.ViewStub;
 import com.icerrate.popularmovies.utils.DialogUtils;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate.
  */
 
 public abstract class BaseFragment extends Fragment implements BaseView {

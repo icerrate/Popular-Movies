@@ -16,8 +16,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * @author Ivan Cerrate
+ * @author Ivan Cerrate.
  */
+
 public class RetrofitModule {
 
     private static RetrofitModule instance = null;

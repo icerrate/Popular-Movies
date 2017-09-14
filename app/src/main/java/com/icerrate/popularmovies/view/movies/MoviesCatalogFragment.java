@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.KEY_MOVIE;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalogView, MoviesCatalogAdapter.OnItemClickListener {
@@ -70,11 +70,11 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_movies_catalog, container, false);
 
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
-        progressBar = (ViewStub) view.findViewById(R.id.progress);
-        moviesRecyclerView = (RecyclerView) view.findViewById(R.id.movies);
-        noDataTextView = (TextView) view.findViewById(R.id.no_data);
-        footerProgressBar = (ViewStub) view.findViewById(R.id.footer_progress);
+        refreshLayout = view.findViewById(R.id.refresh);
+        progressBar = view.findViewById(R.id.progress);
+        moviesRecyclerView = view.findViewById(R.id.movies);
+        noDataTextView = view.findViewById(R.id.no_data);
+        footerProgressBar = view.findViewById(R.id.footer_progress);
 
         return view;
     }

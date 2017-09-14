@@ -15,7 +15,7 @@ import com.icerrate.popularmovies.view.common.LoadMoreBaseAdapter;
 import java.util.ArrayList;
 
 /**
- * @author by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {

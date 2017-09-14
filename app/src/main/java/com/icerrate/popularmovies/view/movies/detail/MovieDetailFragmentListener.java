@@ -3,7 +3,7 @@ package com.icerrate.popularmovies.view.movies.detail;
 import android.view.View;
 
 /**
- * @author by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public interface MovieDetailFragmentListener {

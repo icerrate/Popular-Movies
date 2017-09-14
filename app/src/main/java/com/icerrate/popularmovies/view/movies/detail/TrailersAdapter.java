@@ -15,7 +15,7 @@ import com.icerrate.popularmovies.data.model.Trailer;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerViewHolder> {

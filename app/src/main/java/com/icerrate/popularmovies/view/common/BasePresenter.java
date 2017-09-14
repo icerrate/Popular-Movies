@@ -1,7 +1,7 @@
 package com.icerrate.popularmovies.view.common;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public abstract class BasePresenter<T extends BaseView> {
