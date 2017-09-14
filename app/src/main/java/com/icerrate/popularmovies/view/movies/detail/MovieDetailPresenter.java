@@ -115,7 +115,6 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
 
             @Override
             public void onFailure(String errorMessage) {
-                view.showError(errorMessage);
                 view.showReviewsNoData(true);
             }
         });
