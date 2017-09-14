@@ -8,10 +8,11 @@ In order to run this project, you must add an TheMovieDB Api Key into the "API_K
 
 ## Screenshots
 
-![](https://github.com/icerrate/Popular-Movies/blob/master/art/01.png) __
+![](https://github.com/icerrate/Popular-Movies/blob/master/art/01.png)  _
 ![](https://github.com/icerrate/Popular-Movies/blob/master/art/02.png)
 
 ![](https://github.com/icerrate/Popular-Movies/blob/master/art/03.png)
+|
 ![](https://github.com/icerrate/Popular-Movies/blob/master/art/04.png)
 
 ## Author
@@ -19,7 +20,6 @@ In order to run this project, you must add an TheMovieDB Api Key into the "API_K
 * [icerrate](https://github.com/icerrate)
 
 ## License
--------
 
     Copyright 2016 Ivan Cerrate
 
