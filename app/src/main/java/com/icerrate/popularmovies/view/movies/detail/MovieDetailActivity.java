@@ -142,7 +142,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
         if (backdropImageView != null) {
             Glide.with(this)
                     .load(backdropUrl)
-                    .placeholder(getResources().getDrawable(R.drawable.poster_placeholder))
+                    .placeholder(getResources().getDrawable(R.drawable.backdrop_placeholder))
                     .into(backdropImageView);
         }
     }

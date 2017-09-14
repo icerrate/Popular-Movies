@@ -113,15 +113,15 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
-        posterImageView = (ImageView) view.findViewById(R.id.poster);
-        titleDateTextView = (TextView) view.findViewById(R.id.title);
-        releaseDateTextView = (TextView) view.findViewById(R.id.release_date);
-        ratingTextView = (TextView) view.findViewById(R.id.rating);
-        synopsisTextView = (TextView) view.findViewById(R.id.synopsis);
-        trailersRecyclerView = (RecyclerView) view.findViewById(trailers);
-        trailersNoDataTextView = (TextView) view.findViewById(R.id.trailers_no_data);
-        reviewsRecyclerView = (RecyclerView) view.findViewById(R.id.reviews);
-        reviewsNoDataTextView = (TextView) view.findViewById(R.id.reviews_no_data);
+        posterImageView = view.findViewById(R.id.poster);
+        titleDateTextView = view.findViewById(R.id.title);
+        releaseDateTextView = view.findViewById(R.id.release_date);
+        ratingTextView = view.findViewById(R.id.rating);
+        synopsisTextView = view.findViewById(R.id.synopsis);
+        trailersRecyclerView = view.findViewById(trailers);
+        trailersNoDataTextView = view.findViewById(R.id.trailers_no_data);
+        reviewsRecyclerView = view.findViewById(R.id.reviews);
+        reviewsNoDataTextView = view.findViewById(R.id.reviews_no_data);
 
         return view;
     }
@@ -143,6 +143,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_movie_detail, menu);
         shareMenuItem = menu.getItem(0);
+        presenter.validateMenu();
     }
 
     @Override

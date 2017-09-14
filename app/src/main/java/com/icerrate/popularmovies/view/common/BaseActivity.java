@@ -1,7 +1,6 @@
 package com.icerrate.popularmovies.view.common;
 
 import android.support.annotation.LayoutRes;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +16,6 @@ import com.icerrate.popularmovies.R;
 public abstract class BaseActivity extends AppCompatActivity implements BaseFragmentListener {
 
     protected Toolbar toolbar;
-
-    protected Snackbar connectionSnackbar;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -55,10 +52,5 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseFrag
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }
-    }
-
-    @Override
-    public void showSnackbar(String message) {
-
     }
 }

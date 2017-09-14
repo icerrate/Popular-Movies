@@ -171,6 +171,14 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         }
     }
 
+    public void validateMenu() {
+        if (trailers != null && !trailers.isEmpty()) {
+            view.showShareMenu(true);
+        } else {
+            view.showShareMenu(false);
+        }
+    }
+
     // State
 
     public Movie getMovie() {

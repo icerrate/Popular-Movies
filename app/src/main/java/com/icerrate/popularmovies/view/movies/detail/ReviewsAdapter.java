@@ -56,11 +56,6 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
         notifyDataSetChanged();
     }
 
-    public void resetItems() {
-        this.items.clear();
-        notifyDataSetChanged();
-    }
-
     public static class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView authorTextView;
@@ -73,9 +68,9 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
         public ReviewViewHolder(View itemView, OnButtonClickListener onButtonClickListener) {
             super(itemView);
-            authorTextView = (TextView) itemView.findViewById(R.id.author);
-            contentTextView = (TextView) itemView.findViewById(R.id.content);
-            visitButton = (Button) itemView.findViewById(R.id.visit);
+            authorTextView = itemView.findViewById(R.id.author);
+            contentTextView = itemView.findViewById(R.id.content);
+            visitButton = itemView.findViewById(R.id.visit);
             this.onButtonClickListener = onButtonClickListener;
             visitButton.setOnClickListener(this);
         }

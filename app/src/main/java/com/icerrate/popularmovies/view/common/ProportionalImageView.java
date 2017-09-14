@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 public class ProportionalImageView extends ImageView {
 
-    private static final float ASPECT_RATIO = 0.67f;
+    private static final float ASPECT_RATIO = 0.6f;
 
     public ProportionalImageView(Context context) {
         super(context);
