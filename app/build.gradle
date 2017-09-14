@@ -6,7 +6,7 @@ android {
 
     def THE_MOVIE_DB_API_URL = '"http://api.themoviedb.org"'
     def THE_MOVIE_DB_IMAGES_URL = '"http://image.tmdb.org/t/p/"'
-    def THE_MOVIE_DB_API_KEY = '"api_key"'
+    def THE_MOVIE_DB_API_KEY = '"API_KEY"'
 
     defaultConfig {
         applicationId "com.icerrate.popularmovies"
