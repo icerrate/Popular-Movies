@@ -12,8 +12,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * @author Ivan Cerrate
+ * @author Ivan Cerrate.
  */
+
 public class RetrofitCallback<T> implements Callback<T>  {
 
     private static final String TAG = RetrofitCallback.class.getSimpleName();

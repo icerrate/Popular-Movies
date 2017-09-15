@@ -22,7 +22,7 @@ import com.icerrate.popularmovies.view.common.BaseActivity;
 import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.KEY_MOVIE;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate.
  */
 
 public class MovieDetailActivity extends BaseActivity implements MovieDetailFragmentListener {
@@ -55,11 +55,11 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
             replaceFragment(R.id.content, movieDetailFragment);
         }
 
-        backdropImageView = (ImageView) findViewById(R.id.backdrop);
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        backdropImageView = findViewById(R.id.backdrop);
+        appBarLayout = findViewById(R.id.app_bar);
         titleLayout = findViewById(R.id.layout_title);
-        titleTextView = (TextView) findViewById(R.id.title);
-        favoriteFab = (FloatingActionButton) findViewById(R.id.favorite);
+        titleTextView = findViewById(R.id.title);
+        favoriteFab = findViewById(R.id.favorite);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
         if (backdropImageView != null) {
             Glide.with(this)
                     .load(backdropUrl)
-                    .placeholder(getResources().getDrawable(R.drawable.poster_placeholder))
+                    .placeholder(getResources().getDrawable(R.drawable.backdrop_placeholder))
                     .into(backdropImageView);
         }
     }

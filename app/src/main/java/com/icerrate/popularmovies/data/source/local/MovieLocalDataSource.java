@@ -27,7 +27,7 @@ import static com.icerrate.popularmovies.provider.db.MovieDBHelper.TITLE_COLUMN;
 import static com.icerrate.popularmovies.provider.db.MovieDBHelper.VOTE_AVERAGE_COLUMN;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MovieLocalDataSource implements MovieDataSource {

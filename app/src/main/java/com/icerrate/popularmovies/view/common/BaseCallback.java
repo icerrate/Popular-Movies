@@ -1,8 +1,9 @@
 package com.icerrate.popularmovies.view.common;
 
 /**
- * Created by Ivan Cerrate
+ * @author Ivan Cerrate.
  */
+
 public interface BaseCallback<T> {
 
     void onSuccess(T t);

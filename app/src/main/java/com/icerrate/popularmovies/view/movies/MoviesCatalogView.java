@@ -6,7 +6,7 @@ import com.icerrate.popularmovies.view.common.BaseView;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public interface MoviesCatalogView extends BaseView {

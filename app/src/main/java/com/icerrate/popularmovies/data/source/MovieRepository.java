@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MovieRepository implements MovieDataSource {

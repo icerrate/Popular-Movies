@@ -15,7 +15,7 @@ import com.icerrate.popularmovies.view.common.LoadMoreBaseAdapter;
 import java.util.ArrayList;
 
 /**
- * @author by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
@@ -77,7 +77,7 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
 
         public MovieViewHolder(View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
-            posterImageView = (ImageView) itemView.findViewById(R.id.poster);
+            posterImageView = itemView.findViewById(R.id.poster);
             this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
         }

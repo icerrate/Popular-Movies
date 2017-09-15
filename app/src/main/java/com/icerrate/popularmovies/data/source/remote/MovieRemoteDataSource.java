@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 
 /**
- * @author Ivan Cerrate
+ * @author Ivan Cerrate.
  */
 
 public class MovieRemoteDataSource extends BaseService implements MovieDataSource {

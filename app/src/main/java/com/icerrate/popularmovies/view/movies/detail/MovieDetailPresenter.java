@@ -115,7 +115,6 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
 
             @Override
             public void onFailure(String errorMessage) {
-                view.showError(errorMessage);
                 view.showReviewsNoData(true);
             }
         });
@@ -168,6 +167,14 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
     public void onShareClick() {
         if (trailers != null && !trailers.isEmpty()) {
             view.prepareTrailerShare(trailers.get(0).getVideoUrl());
+        }
+    }
+
+    public void validateMenu() {
+        if (trailers != null && !trailers.isEmpty()) {
+            view.showShareMenu(true);
+        } else {
+            view.showShareMenu(false);
         }
     }
 

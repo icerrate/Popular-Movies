@@ -15,7 +15,7 @@ import com.icerrate.popularmovies.data.model.Trailer;
 import java.util.ArrayList;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerViewHolder> {
@@ -45,7 +45,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         String url = trailer.getVideoThumbnail();
         Glide.with(context)
                 .load(url)
-                .placeholder(context.getResources().getDrawable(R.drawable.poster_placeholder))
+                .placeholder(context.getResources().getDrawable(R.drawable.backdrop_placeholder))
                 .into(viewHolder.thumbnailImageView);
         viewHolder.itemView.setTag(trailer);
         viewHolder.playImageButton.setTag(trailer);
@@ -60,11 +60,6 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         notifyDataSetChanged();
     }
 
-    public void resetItems() {
-        this.items.clear();
-        notifyDataSetChanged();
-    }
-
     public static class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ImageView thumbnailImageView;
@@ -75,8 +70,8 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
         public TrailerViewHolder(View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
-            thumbnailImageView = (ImageView) itemView.findViewById(R.id.thumbnail);
-            playImageButton = (ImageButton) itemView.findViewById(R.id.play);
+            thumbnailImageView = itemView.findViewById(R.id.thumbnail);
+            playImageButton = itemView.findViewById(R.id.play);
             this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
             playImageButton.setOnClickListener(this);

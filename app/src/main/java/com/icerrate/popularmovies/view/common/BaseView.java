@@ -3,7 +3,7 @@ package com.icerrate.popularmovies.view.common;
 import android.content.Context;
 
 /**
- * Created by Ivan Cerrate.
+ * @author Ivan Cerrate.
  */
 
 public interface BaseView {
