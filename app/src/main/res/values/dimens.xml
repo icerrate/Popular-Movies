@@ -1,5 +1,22 @@
 <resources>
 
+    <dimen name="view_margin_small">8dp</dimen>
     <dimen name="view_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="extra_line_space">4dp</dimen>
+    <dimen name="extra_double_line_space">8dp</dimen>
+    <dimen name="overlap_top_extra">48dp</dimen>
+    <dimen name="overlap_top">30dp</dimen>
+    <dimen name="footer_height">80dp</dimen>
+    <dimen name="progress_size">60dp</dimen>
+
+    <dimen name="poster_width">120dp</dimen>
+    <dimen name="poster_height">180dp</dimen>
+
+    <dimen name="trailer_width">220dp</dimen>
+    <dimen name="trailer_height">125dp</dimen>
+
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_18">18sp</dimen>
+    <dimen name="text_22">22sp</dimen>
 </resources>

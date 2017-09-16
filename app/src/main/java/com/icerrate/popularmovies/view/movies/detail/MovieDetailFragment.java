@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.Review;
@@ -25,10 +24,12 @@ import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.utils.InjectionUtils;
 import com.icerrate.popularmovies.view.common.BaseFragment;
 import com.icerrate.popularmovies.view.common.BaseItemDecoration;
+import com.icerrate.popularmovies.view.common.GlideApp;
 
 import java.util.ArrayList;
 
-import static com.icerrate.popularmovies.R.id.trailers;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * @author Ivan Cerrate.
@@ -43,29 +44,38 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     public static String KEY_REVIEWS = "REVIEWS_KEY";
 
-    private ImageView posterImageView;
+    @BindView(R.id.poster)
+    public ImageView posterImageView;
 
-    private TextView titleDateTextView;
+    @BindView(R.id.title)
+    public TextView titleDateTextView;
 
-    private TextView releaseDateTextView;
+    @BindView(R.id.release_date)
+    public TextView releaseDateTextView;
 
-    private TextView ratingTextView;
+    @BindView(R.id.rating)
+    public TextView ratingTextView;
 
-    private TextView synopsisTextView;
+    @BindView(R.id.synopsis)
+    public TextView synopsisTextView;
 
-    private RecyclerView trailersRecyclerView;
+    @BindView(R.id.trailers)
+    public RecyclerView trailersRecyclerView;
+
+    @BindView(R.id.trailers_no_data)
+    public TextView trailersNoDataTextView;
+
+    @BindView(R.id.reviews)
+    public RecyclerView reviewsRecyclerView;
+
+    @BindView(R.id.reviews_no_data)
+    public TextView reviewsNoDataTextView;
+
+    private MenuItem shareMenuItem;
 
     private TrailersAdapter trailersAdapter;
 
-    private TextView trailersNoDataTextView;
-
-    private RecyclerView reviewsRecyclerView;
-
     private ReviewsAdapter reviewsAdapter;
-
-    private TextView reviewsNoDataTextView;
-
-    private MenuItem shareMenuItem;
 
     private MovieDetailPresenter presenter;
 
@@ -112,17 +122,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-
-        posterImageView = view.findViewById(R.id.poster);
-        titleDateTextView = view.findViewById(R.id.title);
-        releaseDateTextView = view.findViewById(R.id.release_date);
-        ratingTextView = view.findViewById(R.id.rating);
-        synopsisTextView = view.findViewById(R.id.synopsis);
-        trailersRecyclerView = view.findViewById(trailers);
-        trailersNoDataTextView = view.findViewById(R.id.trailers_no_data);
-        reviewsRecyclerView = view.findViewById(R.id.reviews);
-        reviewsNoDataTextView = view.findViewById(R.id.reviews_no_data);
-
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -223,14 +223,13 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
             }
         });
         titleDateTextView.setText(title);
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(posterUrl)
                 .placeholder(getResources().getDrawable(R.drawable.poster_placeholder))
                 .into(posterImageView);
         releaseDateTextView.setText(releaseDate);
         ratingTextView.setText(rating);
         synopsisTextView.setText(synopsis);
-
     }
 
     @Override

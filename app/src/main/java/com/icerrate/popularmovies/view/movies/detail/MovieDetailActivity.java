@@ -14,10 +14,10 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.view.common.BaseActivity;
+import com.icerrate.popularmovies.view.common.GlideApp;
 
 import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.KEY_MOVIE;
 
@@ -140,7 +140,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
     @Override
     public void setBackdropImage(String backdropUrl) {
         if (backdropImageView != null) {
-            Glide.with(this)
+            GlideApp.with(this)
                     .load(backdropUrl)
                     .placeholder(getResources().getDrawable(R.drawable.backdrop_placeholder))
                     .into(backdropImageView);

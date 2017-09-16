@@ -9,17 +9,22 @@ import android.view.MenuItem;
 
 import com.icerrate.popularmovies.R;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * @author Ivan Cerrate.
  */
 
 public abstract class BaseActivity extends AppCompatActivity implements BaseFragmentListener {
 
+    private Unbinder unbinder;
     protected Toolbar toolbar;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
+        unbinder = ButterKnife.bind(this);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
@@ -31,6 +36,12 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseFrag
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbinder.unbind();
+        super.onDestroy();
     }
 
     @Override

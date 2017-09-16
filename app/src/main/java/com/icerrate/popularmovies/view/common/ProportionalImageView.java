@@ -10,7 +10,9 @@ import android.widget.ImageView;
 
 public class ProportionalImageView extends ImageView {
 
-    private static final float ASPECT_RATIO = 0.6f;
+    private static final float HORIZONTAL_ASPECT_RATIO = 0.6f;
+
+    private static final float VERTICAL_ASPECT_RATIO = 1.5f;
 
     public ProportionalImageView(Context context) {
         super(context);
@@ -27,7 +29,12 @@ public class ProportionalImageView extends ImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = Math.round(width * ASPECT_RATIO);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        if (width > height) {
+            height = Math.round(width * HORIZONTAL_ASPECT_RATIO);
+        } else if (height > width) {
+            height = Math.round(width * VERTICAL_ASPECT_RATIO);
+        }
         setMeasuredDimension(width, height);
     }
 }

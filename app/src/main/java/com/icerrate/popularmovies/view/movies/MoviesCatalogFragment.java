@@ -28,6 +28,9 @@ import com.icerrate.popularmovies.view.movies.detail.MovieDetailActivity;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.KEY_MOVIE;
 
 /**
@@ -42,15 +45,18 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
 
     public static String KEY_PAGINATED_MOVIES = "PAGINATED_MOVIES_KEY";
 
-    private RecyclerView moviesRecyclerView;
+    @BindView(R.id.movies)
+    public RecyclerView moviesRecyclerView;
 
-    private TextView noDataTextView;
+    @BindView(R.id.movies_no_data)
+    public TextView noDataTextView;
+
+    @BindView(R.id.footer_progress)
+    public ViewStub footerProgressBar;
 
     private MoviesCatalogAdapter adapter;
 
     private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
-
-    protected ViewStub footerProgressBar;
 
     private MoviesCatalogPresenter presenter;
 
@@ -69,13 +75,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_movies_catalog, container, false);
-
-        refreshLayout = view.findViewById(R.id.refresh);
-        progressBar = view.findViewById(R.id.progress);
-        moviesRecyclerView = view.findViewById(R.id.movies);
-        noDataTextView = view.findViewById(R.id.no_data);
-        footerProgressBar = view.findViewById(R.id.footer_progress);
-
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -157,13 +157,16 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
         moviesRecyclerView.setAdapter(adapter);
         moviesRecyclerView.setLayoutManager(gridLayoutManager);
         moviesRecyclerView.addOnScrollListener(endlessRecyclerOnScrollListener);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenter.onSwipeMovies();
-            }
-        });
-        refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        //refresh
+        if (refreshLayout != null) {
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    presenter.onSwipeMovies();
+                }
+            });
+            refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        }
     }
 
     private int getColumns() {

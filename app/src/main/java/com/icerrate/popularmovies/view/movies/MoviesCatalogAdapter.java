@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
+import com.icerrate.popularmovies.view.common.GlideApp;
 import com.icerrate.popularmovies.view.common.LoadMoreBaseAdapter;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
             Context context = holder.itemView.getContext();
             String url = movie.getPosterUrl("w500");
 
-            Glide.with(context)
+            GlideApp.with(context)
                     .load(url)
                     .placeholder(context.getResources().getDrawable(R.drawable.poster_placeholder))
                     .into(movieViewHolder.posterImageView);

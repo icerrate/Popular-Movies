@@ -57,7 +57,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 "Upgrading database from version "
                         + oldVersion + " to " + newVersion
                         + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITE);
+        db.execSQL("ALTER TABLE IF EXISTS " + TABLE_FAVORITE);
         onCreate(db);
     }
 }

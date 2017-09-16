@@ -8,19 +8,19 @@
         android:id="@+id/author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/view_margin_small"
         android:textStyle="bold"
-        tools:text="Author" />
+        tools:text="@string/preview_author" />
 
     <TextView
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/author"
-        android:layout_marginTop="6dp"
-        android:maxLines="5"
+        android:layout_marginTop="@dimen/extra_double_line_space"
         android:ellipsize="end"
-        tools:text="Content" />
+        android:maxLines="5"
+        tools:text="@string/preview_content" />
 
     <Button
         android:id="@+id/visit"
@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/content"
         android:text="@string/review_on_web_button"
         android:textColor="@color/colorAccent"

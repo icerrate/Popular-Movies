@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Trailer;
+import com.icerrate.popularmovies.view.common.GlideApp;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
         Context context = viewHolder.itemView.getContext();
         String url = trailer.getVideoThumbnail();
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(url)
                 .placeholder(context.getResources().getDrawable(R.drawable.backdrop_placeholder))
                 .into(viewHolder.thumbnailImageView);

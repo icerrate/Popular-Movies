@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="220dp"
-    android:layout_height="125dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="@dimen/trailer_width"
+        android:layout_height="@dimen/trailer_height"
         android:scaleType="fitXY"
-        android:src="@color/placeholder_background"/>
+        android:src="@color/placeholder_background" />
 
     <ImageButton
         android:id="@+id/play"
+        style="@style/SelectableCircularItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_play_video"
         android:layout_centerInParent="true"
-        style="@style/SelectableCircularItem"/>
+        android:src="@drawable/ic_play_video" />
 
 </RelativeLayout>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/catalog_background">
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -19,16 +19,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                app:layoutManager="android.support.v7.widget.GridLayoutManager"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager" />
 
             <TextView
-                android:id="@+id/no_data"
+                android:id="@+id/movies_no_data"
                 android:layout_width="match_parent"
-                android:textStyle="bold"
-                android:textColor="@color/white"
                 android:layout_height="?android:attr/listPreferredItemHeight"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -46,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        android:layout="@layout/footer_progress_bar" />
+        android:layout="@layout/footer_progress_bar"
+        android:visibility="gone" />
 
 </RelativeLayout>

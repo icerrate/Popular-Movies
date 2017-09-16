@@ -24,4 +24,12 @@
     <string name="reviews_no_data">No Reviews</string>
     <string name="favorite_added">Added to favorites</string>
     <string name="favorite_removed">Removed from favorites</string>
+
+
+    <string name="preview_title">Title</string>
+    <string name="preview_release">Release Date</string>
+    <string name="preview_rating">Rating</string>
+    <string name="preview_synopsis">Synopsis</string>
+    <string name="preview_author">Author</string>
+    <string name="preview_content">Content</string>
 </resources>

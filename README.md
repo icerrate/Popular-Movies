@@ -1,10 +1,10 @@
-# Popular-Movies (Stage 2)
+# Popular-Movies
 
 Project for Udacity - Associate Android Developer Fast Track Nanodegree.
 
 ## Api Key
 
-In order to run this project, you must add an TheMovieDB Api Key into the "API_KEY" field in the [build.gradle](https://github.com/icerrate/Popular-Movies/blob/master/app/build.gradle) file.
+In order to run this project, you must create file project.properties and add a TheMovieDB Api Key like this: tmdApiKey="9749e4a41e75e6d61dd2e91d7aa44a09"
 
 ## Screenshots
 

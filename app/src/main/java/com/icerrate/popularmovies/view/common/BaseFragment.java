@@ -3,13 +3,17 @@ package com.icerrate.popularmovies.view.common;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewStub;
 
+import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.utils.DialogUtils;
+
+import butterknife.BindView;
 
 /**
  * @author Ivan Cerrate.
@@ -17,8 +21,12 @@ import com.icerrate.popularmovies.utils.DialogUtils;
 
 public abstract class BaseFragment extends Fragment implements BaseView {
 
+    @Nullable
+    @BindView(R.id.refresh)
     protected SwipeRefreshLayout refreshLayout;
 
+    @Nullable
+    @BindView(R.id.progress)
     protected ViewStub progressBar;
 
     protected BaseFragmentListener fragmentListener;
