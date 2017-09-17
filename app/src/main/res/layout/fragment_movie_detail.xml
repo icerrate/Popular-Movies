@@ -3,14 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:padding="@dimen/view_margin">
 
     <com.icerrate.popularmovies.view.common.ProportionalImageView
         android:id="@+id/poster"
-        android:layout_width="120dp"
-        android:layout_height="180dp"
+        android:layout_width="@dimen/poster_width"
+        android:layout_height="@dimen/poster_height"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/poster_placeholder" />
@@ -22,7 +21,6 @@
         android:layout_marginLeft="@dimen/view_margin"
         android:layout_marginStart="@dimen/view_margin"
         android:layout_marginTop="@dimen/overlap_top_extra"
-        android:gravity="center_vertical"
         android:textColor="@color/black"
         android:textSize="@dimen/text_22"
         app:layout_constraintLeft_toRightOf="@+id/poster"
@@ -37,7 +35,6 @@
         android:layout_marginLeft="@dimen/view_margin"
         android:layout_marginStart="@dimen/view_margin"
         android:layout_marginTop="@dimen/extra_line_space"
-        android:gravity="center_vertical"
         android:textSize="@dimen/text_18"
         app:layout_constraintLeft_toRightOf="@+id/poster"
         app:layout_constraintRight_toRightOf="parent"
@@ -64,99 +61,88 @@
         android:id="@+id/synopsis"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="parent"
         android:layout_marginTop="@dimen/view_margin"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/barrier_main_info"
+        app:layout_constraintTop_toBottomOf="@+id/poster"
         tools:text="@string/preview_synopsis" />
 
-    <TextView
-        android:id="@+id/trailers_title"
+    <RelativeLayout
+        android:id="@+id/trailers_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/view_margin"
-        android:text="@string/trailers_title"
-        android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/text_18"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/synopsis" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/trailers"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/view_margin"
-        android:orientation="horizontal"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trailers_title"
-        tools:listitem="@layout/item_trailer" />
-
-    <TextView
-        android:id="@+id/trailers_no_data"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="@dimen/view_margin"
-        android:gravity="center"
-        android:text="@string/trailers_no_data"
-        android:textStyle="bold"
-        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trailers_title" />
+        app:layout_constraintTop_toBottomOf="@+id/synopsis">
 
-    <TextView
-        android:id="@+id/reviews_title"
+        <TextView
+            android:id="@+id/trailers_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/trailers_title"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_18"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/trailers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/trailers_title"
+            android:layout_marginTop="@dimen/view_margin"
+            android:orientation="horizontal"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_trailer" />
+
+        <TextView
+            android:id="@+id/trailers_no_data"
+            android:layout_width="match_parent"
+            android:layout_height="?android:listPreferredItemHeightSmall"
+            android:layout_below="@+id/trailers_title"
+            android:gravity="center"
+            android:text="@string/trailers_no_data"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/reviews_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/view_margin"
-        android:text="@string/reviews_title"
-        android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/text_18"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/barrier_trailers" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/reviews"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/view_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reviews_title"
-        tools:listitem="@layout/item_review" />
-
-    <TextView
-        android:id="@+id/reviews_no_data"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="@dimen/view_margin"
-        android:gravity="center"
-        android:text="@string/reviews_no_data"
-        android:textStyle="bold"
-        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reviews_title" />
+        app:layout_constraintTop_toBottomOf="@+id/trailers_group">
 
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier_main_info"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="poster,title,release,rating"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        <TextView
+            android:id="@+id/reviews_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reviews_title"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_18"
+            android:textStyle="bold" />
 
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier_trailers"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="trailers,trailers_no_data,trailers_title"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/reviews_title"
+            android:layout_marginTop="@dimen/view_margin"
+            tools:listitem="@layout/item_review" />
+
+        <TextView
+            android:id="@+id/reviews_no_data"
+            android:layout_width="match_parent"
+            android:layout_height="?android:listPreferredItemHeightSmall"
+            android:layout_below="@+id/reviews_title"
+            android:gravity="center"
+            android:text="@string/reviews_no_data"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

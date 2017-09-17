@@ -239,7 +239,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     @Override
     public void showTrailersNoData(boolean show) {
-        trailersNoDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+        trailersNoDataTextView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     @Override
     public void showReviewsNoData(boolean show) {
-        reviewsNoDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+        reviewsNoDataTextView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
