@@ -33,7 +33,7 @@
         android:background="@color/catalog_background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/movies_no_data"
             style="@style/DataDescription"
             android:text="@string/search_movies_hint"

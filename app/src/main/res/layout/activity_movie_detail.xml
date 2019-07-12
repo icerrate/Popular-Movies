@@ -43,7 +43,7 @@
                 android:layout_gravity="bottom"
                 app:layout_collapseMode="pin">
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/title"
                     style="@style/AppTheme.AppBarTitle"
                     android:layout_width="match_parent"

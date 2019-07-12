@@ -21,7 +21,7 @@
                 android:scrollbars="vertical"
                 app:layoutManager="android.support.v7.widget.GridLayoutManager" />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/movies_no_data"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/listPreferredItemHeight"

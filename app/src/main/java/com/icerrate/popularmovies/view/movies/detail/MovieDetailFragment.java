@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,31 +47,31 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailCont
     public static String KEY_REVIEWS = "REVIEWS_KEY";
 
     @BindView(R.id.poster)
-    public ImageView posterImageView;
+    public AppCompatImageView posterImageView;
 
     @BindView(R.id.title)
-    public TextView titleDateTextView;
+    public AppCompatTextView titleDateTextView;
 
     @BindView(R.id.release_date)
-    public TextView releaseDateTextView;
+    public AppCompatTextView releaseDateTextView;
 
     @BindView(R.id.rating)
-    public TextView ratingTextView;
+    public AppCompatTextView ratingTextView;
 
     @BindView(R.id.synopsis)
-    public TextView synopsisTextView;
+    public AppCompatTextView synopsisTextView;
 
     @BindView(R.id.trailers)
     public RecyclerView trailersRecyclerView;
 
     @BindView(R.id.trailers_no_data)
-    public TextView trailersNoDataTextView;
+    public AppCompatTextView trailersNoDataTextView;
 
     @BindView(R.id.reviews)
     public RecyclerView reviewsRecyclerView;
 
     @BindView(R.id.reviews_no_data)
-    public TextView reviewsNoDataTextView;
+    public AppCompatTextView reviewsNoDataTextView;
 
     private MenuItem shareMenuItem;
 

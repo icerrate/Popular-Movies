@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -37,7 +39,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
 
     @BindView(R.id.backdrop)
     @Nullable
-    public ImageView backdropImageView;
+    public AppCompatImageView backdropImageView;
 
     @BindView(R.id.app_bar)
     public AppBarLayout appBarLayout;
@@ -48,7 +50,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
 
     @BindView(R.id.title)
     @Nullable
-    public TextView titleTextView;
+    public AppCompatTextView titleTextView;
 
     @BindView(R.id.favorite)
     public FloatingActionButton favoriteFab;

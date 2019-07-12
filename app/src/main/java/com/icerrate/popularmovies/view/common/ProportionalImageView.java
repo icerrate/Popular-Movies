@@ -1,6 +1,7 @@
 package com.icerrate.popularmovies.view.common;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -8,7 +9,7 @@ import android.widget.ImageView;
  * @author Ivan Cerrate.
  */
 
-public class ProportionalImageView extends ImageView {
+public class ProportionalImageView extends AppCompatImageView {
 
     private static final float HORIZONTAL_ASPECT_RATIO = 0.6f;
 

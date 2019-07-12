@@ -1,5 +1,7 @@
 package com.icerrate.popularmovies.view.movies.detail;
 
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,11 +60,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
     public static class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView authorTextView;
+        public AppCompatTextView authorTextView;
 
-        public TextView contentTextView;
+        public AppCompatTextView contentTextView;
 
-        public Button visitButton;
+        public AppCompatButton visitButton;
 
         private OnButtonClickListener onButtonClickListener;
 

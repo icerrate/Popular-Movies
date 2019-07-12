@@ -1,6 +1,8 @@
 package com.icerrate.popularmovies.view.movies.detail;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,9 +65,9 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     public static class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public ImageView thumbnailImageView;
+        public AppCompatImageView thumbnailImageView;
 
-        public ImageButton playImageButton;
+        public AppCompatImageButton playImageButton;
 
         private OnItemClickListener onItemClickListener;
 

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.TextViewCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -53,7 +55,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public RecyclerView moviesRecyclerView;
 
     @BindView(R.id.movies_no_data)
-    public TextView noDataTextView;
+    public AppCompatTextView noDataTextView;
 
     @BindView(R.id.footer_progress)
     public ViewStub footerProgressBar;
