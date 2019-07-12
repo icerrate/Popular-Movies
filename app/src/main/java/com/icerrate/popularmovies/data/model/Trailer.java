@@ -12,15 +12,33 @@ import com.google.gson.annotations.SerializedName;
 public class Trailer implements Parcelable {
 
     private String id;
+
     @SerializedName("iso_639_1")
     private String iso639;
+
     @SerializedName("iso_3166_1")
     private String iso3166;
+
     private String key;
+
     private String name;
+
     private String site;
+
     private int size;
+
     private String type;
+
+    public Trailer(String id, String iso639, String iso3166, String key, String name, String site, int size, String type){
+        this.id = id;
+        this.iso639 = iso639;
+        this.iso3166 = iso3166;
+        this.key = key;
+        this.name = name;
+        this.site = site;
+        this.size = size;
+        this.type = type;
+    }
 
     public String getId() {
         return id;

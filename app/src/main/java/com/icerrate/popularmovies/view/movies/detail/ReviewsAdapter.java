@@ -78,13 +78,13 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
         @Override
         public void onClick(View view) {
             if (onButtonClickListener != null) {
-                onButtonClickListener.onButtonClick(view);
+                onButtonClickListener.onPlayButtonClick(view);
             }
         }
     }
 
     public interface OnButtonClickListener {
 
-        void onButtonClick(View view);
+        void onPlayButtonClick(View view);
     }
 }

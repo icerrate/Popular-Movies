@@ -19,4 +19,5 @@
     <color name="black_alpha">#80000000</color>
 
     <color name="catalog_background">#505050</color>
+    <color name="detail_background">#EEEEEE</color>
 </resources>

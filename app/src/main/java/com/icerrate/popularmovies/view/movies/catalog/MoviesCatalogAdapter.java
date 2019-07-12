@@ -1,4 +1,4 @@
-package com.icerrate.popularmovies.view.movies;
+package com.icerrate.popularmovies.view.movies.catalog;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +13,18 @@ import com.icerrate.popularmovies.view.common.GlideApp;
 import com.icerrate.popularmovies.view.common.LoadMoreBaseAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * @author Ivan Cerrate.
  */
 
 public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
+
+    private final static float RATIO = 1.5f;
 
     private OnItemClickListener onItemClickListener;
 
@@ -37,8 +43,7 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
     @Override
     public RecyclerView.ViewHolder onCreateDataViewHolder(ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movies_catalog, parent, false);
-        layoutView.getLayoutParams().height = (int) (parent.getWidth() / columns *
-                1.5f);
+        layoutView.getLayoutParams().height = (int) (parent.getWidth() / columns * RATIO);
         return new MovieViewHolder(layoutView, onItemClickListener);
     }
 
@@ -59,7 +64,7 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
         }
     }
 
-    public void addItems(ArrayList<Movie> items) {
+    public void addItems(List<Movie> items) {
         this.data.addAll(items);
         notifyDataSetChanged();
     }
@@ -71,13 +76,14 @@ public class MoviesCatalogAdapter extends LoadMoreBaseAdapter<Movie> {
 
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ImageView posterImageView;
+        @BindView(R.id.poster)
+        public ImageView posterImageView;
 
         private OnItemClickListener onItemClickListener;
 
         public MovieViewHolder(View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
-            posterImageView = itemView.findViewById(R.id.poster);
+            ButterKnife.bind(this, itemView);
             this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
         }

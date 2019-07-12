@@ -1,6 +1,7 @@
-package com.icerrate.popularmovies.view.movies;
+package com.icerrate.popularmovies.view.movies.catalog;
 
 import android.os.Bundle;
+import android.view.Window;
 
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.view.common.BaseActivity;

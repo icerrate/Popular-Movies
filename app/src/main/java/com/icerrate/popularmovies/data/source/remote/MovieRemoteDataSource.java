@@ -43,6 +43,13 @@ public class MovieRemoteDataSource extends BaseService implements MovieDataSourc
     }
 
     @Override
+    public void searchMovies(String query, Integer page, BaseCallback<PaginatedResponse<Movie>> callback) {
+        final Call<PaginatedResponse<Movie>> call = movieAPI.searchMovies(query, page);
+        ServiceRequest<PaginatedResponse<Movie>> serviceRequest = new ServerServiceRequest<>(call);
+        enqueue(serviceRequest, callback);
+    }
+
+    @Override
     public void getMovieTrailers(Integer movieId, BaseCallback<TrailersResponse<Trailer>> callback) {
         final Call<TrailersResponse<Trailer>> call = movieAPI.getMovieTrailers(movieId);
         ServiceRequest<TrailersResponse<Trailer>> serviceRequest = new ServerServiceRequest<>(call);

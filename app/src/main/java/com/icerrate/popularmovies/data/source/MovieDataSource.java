@@ -19,6 +19,8 @@ public interface MovieDataSource {
 
     void getTopRatedMovies(Integer page, BaseCallback<PaginatedResponse<Movie>> callback);
 
+    void searchMovies(String quey, Integer page, BaseCallback<PaginatedResponse<Movie>> callback);
+
     void getMovieTrailers(Integer movieId, BaseCallback<TrailersResponse<Trailer>> callback);
 
     void getMovieReviews(Integer movieId, BaseCallback<PaginatedResponse<Review>> callback);

@@ -4,7 +4,7 @@ Project for Udacity - Associate Android Developer Fast Track Nanodegree.
 
 ## Api Key
 
-In order to run this project, you must create file project.properties and add a TheMovieDB Api Key like this: tmdApiKey="9749e4a41e75e6d61dd2e91d7aa44a09"
+In order to run this project, you must create file project.properties and add a TheMovieDB Api Key like this: tmdApiKey="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
 ## Screenshots
 
@@ -13,6 +13,7 @@ In order to run this project, you must create file project.properties and add a 
 
 ![](https://github.com/icerrate/Popular-Movies/blob/master/art/03.png)
 ![](https://github.com/icerrate/Popular-Movies/blob/master/art/04.png)
+![](https://github.com/icerrate/Popular-Movies/blob/master/art/05.png)
 
 ## Author
 
@@ -20,7 +21,7 @@ In order to run this project, you must create file project.properties and add a 
 
 ## License
 
-    Copyright 2017 Ivan Cerrate
+    Copyright 2019 Ivan Cerrate
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

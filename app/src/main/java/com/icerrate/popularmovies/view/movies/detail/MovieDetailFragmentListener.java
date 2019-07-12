@@ -14,7 +14,7 @@ public interface MovieDetailFragmentListener {
 
     void setFavoriteOnClickListener(View.OnClickListener onClickListener);
 
-    void updateFavoriteIcon(int icon);
+    void setFavoriteState(boolean isFavorite);
 
-    void notifyUpdate();
+    void updateFavoriteState(boolean isFavorite);
 }

@@ -1,30 +1,33 @@
-package com.icerrate.popularmovies.view.movies;
+package com.icerrate.popularmovies.view.movies.catalog;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.PaginatedResponse;
 import com.icerrate.popularmovies.utils.InjectionUtils;
+import com.icerrate.popularmovies.utils.ViewUtils;
 import com.icerrate.popularmovies.view.common.BaseFragment;
 import com.icerrate.popularmovies.view.common.EndlessRecyclerOnScrollListener;
 import com.icerrate.popularmovies.view.movies.detail.MovieDetailActivity;
+import com.icerrate.popularmovies.view.movies.catalog.MoviesCatalogPresenter.SortType;
+import com.icerrate.popularmovies.view.movies.search.SearchMoviesActivity;
 
 import java.util.ArrayList;
 
@@ -37,13 +40,14 @@ import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.
  * @author Ivan Cerrate.
  */
 
-public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalogView, MoviesCatalogAdapter.OnItemClickListener {
+public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalogContract.View,
+        MoviesCatalogAdapter.OnItemClickListener {
 
-    public static int RC_MOVIE_DETAIL = 25;
+    public final static int RC_MOVIE_DETAIL = 25;
 
-    public static String KEY_SORT_TYPE = "SORT_TYPE_KEY";
+    public final static String KEY_SORT_TYPE = "SORT_TYPE_KEY";
 
-    public static String KEY_PAGINATED_MOVIES = "PAGINATED_MOVIES_KEY";
+    public final static String KEY_PAGINATED_MOVIES = "PAGINATED_MOVIES_KEY";
 
     @BindView(R.id.movies)
     public RecyclerView moviesRecyclerView;
@@ -59,6 +63,8 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
 
     private MoviesCatalogPresenter presenter;
+
+    private ImageView selectedMoviePoster;
 
     public static MoviesCatalogFragment newInstance() {
         return new MoviesCatalogFragment();
@@ -87,8 +93,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
             restoreInstanceState(savedInstanceState);
             presenter.loadMovies();
         } else {
-            presenter.setSortType(MoviesCatalogPresenter.SortType.MOST_POPULAR);
-            presenter.refreshMovies();
+            presenter.loadMoviesBySortType(SortType.MOST_POPULAR);
         }
     }
 
@@ -110,22 +115,25 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        SortType selectedSortType;
         switch (item.getItemId()) {
             case R.id.popular:
-                presenter.setSortType(MoviesCatalogPresenter.SortType.MOST_POPULAR);
-                presenter.refreshMovies();
+                selectedSortType = SortType.MOST_POPULAR;
                 break;
             case R.id.top_rated:
-                presenter.setSortType(MoviesCatalogPresenter.SortType.HIGHEST_RATED);
-                presenter.refreshMovies();
+                selectedSortType = SortType.HIGHEST_RATED;
                 break;
             case R.id.favorite:
-                presenter.setSortType(MoviesCatalogPresenter.SortType.FAVORITE);
-                presenter.refreshMovies();
+                selectedSortType = SortType.FAVORITE;
                 break;
+            case R.id.action_search:
+                startActivity(SearchMoviesActivity.makeIntent(getContext()));
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.none);
+                return true;
             default:
                 return false;
         }
+        presenter.refreshMoviesBySortType(selectedSortType);
         item.setChecked(true);
         return true;
     }
@@ -145,7 +153,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
 
     private void setupView() {
         //Movies
-        int columns = getColumns();
+        int columns = ViewUtils.getGridColumns(getActivity());
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), columns);
         endlessRecyclerOnScrollListener = new EndlessRecyclerOnScrollListener(gridLayoutManager) {
             @Override
@@ -162,19 +170,10 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    presenter.onSwipeMovies();
+                    presenter.refreshMovies();
                 }
             });
             refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        }
-    }
-
-    private int getColumns() {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        if (display.getRotation() == Surface.ROTATION_0) {
-            return 2;
-        } else {
-            return 4;
         }
     }
 
@@ -182,17 +181,7 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_MOVIE_DETAIL && resultCode == Activity.RESULT_OK) {
-            if (presenter.getSortType().equals(MoviesCatalogPresenter.SortType.FAVORITE)) {
-                presenter.refreshMovies();
-            }
-        }
-    }
-
-    @Override
-    public void onItemClick(View view) {
-        Movie movie = (Movie) view.getTag();
-        if (movie != null) {
-            presenter.onMovieItemClick(movie);
+            presenter.onBackFromDetail();
         }
     }
 
@@ -210,20 +199,32 @@ public class MoviesCatalogFragment extends BaseFragment implements MoviesCatalog
     }
 
     @Override
+    public void showNoDataView(boolean show) {
+        noDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+        noDataTextView.setText(getString(R.string.movies_no_data));
+    }
+
+    @Override
     public void showFooterProgress(boolean show) {
         adapter.setLoading(show);
         footerProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
-    public void showNoDataView(boolean show, String noDataText) {
-        noDataTextView.setVisibility(show ? View.VISIBLE : View.GONE);
-        noDataTextView.setText(noDataText);
+    public void goToMovieDetail(Movie movie) {
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                selectedMoviePoster, getString(R.string.movie_poster_transition));
+        startActivityForResult(MovieDetailActivity.makeIntent(getActivity())
+                .putExtra(KEY_MOVIE, movie), RC_MOVIE_DETAIL, options.toBundle());
+        getActivity().overridePendingTransition(R.anim.fade_in, R.anim.none);
     }
 
     @Override
-    public void goToMovieDetail(Movie movie) {
-        startActivityForResult(MovieDetailActivity.makeIntent(getActivity())
-                .putExtra(KEY_MOVIE, movie), RC_MOVIE_DETAIL);
+    public void onItemClick(View view) {
+        Movie movie = (Movie) view.getTag();
+        if (movie != null) {
+            selectedMoviePoster = view.findViewById(R.id.poster);
+            presenter.onMovieItemClick(movie);
+        }
     }
 }

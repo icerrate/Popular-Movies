@@ -9,7 +9,6 @@ import com.icerrate.popularmovies.data.model.TrailersResponse;
 import com.icerrate.popularmovies.data.source.MovieRepository;
 import com.icerrate.popularmovies.utils.FormatUtils;
 import com.icerrate.popularmovies.view.common.BaseCallback;
-import com.icerrate.popularmovies.view.common.BasePresenter;
 
 import java.util.ArrayList;
 
@@ -17,7 +16,13 @@ import java.util.ArrayList;
  * @author Ivan Cerrate.
  */
 
-public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
+public class MovieDetailPresenter implements MovieDetailContract.Presenter {
+
+    private final static String POSTER_CODE = "w342";
+
+    private final static String BACKDROP_CODE = "w780";
+
+    private MovieDetailContract.View view;
 
     private Movie movie;
 
@@ -27,36 +32,36 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
 
     private MovieRepository movieRepository;
 
-    public MovieDetailPresenter(MovieDetailView view, MovieRepository movieRepository) {
-        super(view);
+    public MovieDetailPresenter(MovieDetailContract.View view, MovieRepository movieRepository) {
+        this.view = view;
         this.movieRepository = movieRepository;
     }
 
+    @Override
     public void setMovieDetail(Movie movie) {
         this.movie = movie;
     }
 
-    public void loadView() {
-        //Start process
-        loadMovie();
-    }
-
-    public void loadMovie() {
-        String title = movie.getTitle();
-        String releaseDate = FormatUtils.formatDate(movie.getReleaseDate(), FormatUtils.FORMAT_yyyy_MM_dd, FormatUtils.FORMAT_MMM_dd_yyyy);
-        String posterUrl = movie.getPosterUrl("w342");
-        String backdropUrl = movie.getBackdropUrl("w780");
-        String rating = movie.getVoteAverage() + getStringRes(R.string.rating);
-        String synopsis = movie.getOverview();
-        boolean isFavorite = movie.isFavorite();
-        view.showMovieDetail(title, releaseDate, posterUrl, backdropUrl, rating, synopsis);
-        view.updateFavoriteIcon(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
-        //Next steps
+    @Override
+    public void loadMovieDetails() {
+        loadHeader();
         loadTrailers();
         loadReviews();
     }
 
-    public void loadTrailers() {
+    private void loadHeader() {
+        String title = movie.getTitle();
+        String releaseDate = FormatUtils.formatDate(movie.getReleaseDate(), FormatUtils.FORMAT_yyyy_MM_dd, FormatUtils.FORMAT_MMM_dd_yyyy);
+        String posterUrl = movie.getPosterUrl(POSTER_CODE);
+        String backdropUrl = movie.getBackdropUrl(BACKDROP_CODE);
+        String rating = String.valueOf(movie.getVoteAverage());
+        String synopsis = movie.getOverview();
+        boolean isFavorite = movie.isFavorite();
+        view.showHeader(title, releaseDate, posterUrl, backdropUrl, rating, synopsis);
+        view.showFavoriteState(isFavorite);
+    }
+
+    private void loadTrailers() {
         if (trailers == null) {
             getInternalTrailers();
         } else {
@@ -92,7 +97,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         }
     }
 
-    public void loadReviews() {
+    private void loadReviews() {
         if (reviews == null) {
             getInternalReviews();
         } else {
@@ -105,16 +110,12 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
             @Override
             public void onSuccess(PaginatedResponse<Review> response) {
                 reviews = response.getResults();
-                if (reviews != null && !reviews.isEmpty()) {
-                    view.showReviewsNoData(false);
-                    view.showReviews(response.getResults());
-                } else {
-                    view.showReviewsNoData(true);
-                }
+                showReviews(reviews);
             }
 
             @Override
             public void onFailure(String errorMessage) {
+                view.showError(errorMessage);
                 view.showReviewsNoData(true);
             }
         });
@@ -129,6 +130,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
         }
     }
 
+    @Override
     public void onFavoriteFabClicked() {
         boolean isFavorite = movie.isFavorite();
         if (isFavorite) {
@@ -136,14 +138,13 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
                 @Override
                 public void onSuccess(Void aVoid) {
                     movie.setFavorite(false);
-                    view.notifyUpdate();
-                    view.updateFavoriteIcon(R.drawable.ic_favorite_border);
-                    view.showSnackbarMessage(getStringRes(R.string.favorite_removed));
+                    view.updateFavoriteState(false);
+                    view.showSnackbarMessage(R.string.favorite_removed);
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
-
+                    view.showError(errorMessage);
                 }
             });
         } else {
@@ -151,47 +152,50 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView> {
                 @Override
                 public void onSuccess(Void aVoid) {
                     movie.setFavorite(true);
-                    view.notifyUpdate();
-                    view.updateFavoriteIcon(R.drawable.ic_favorite);
-                    view.showSnackbarMessage(getStringRes(R.string.favorite_added));
+                    view.updateFavoriteState(true);
+                    view.showSnackbarMessage(R.string.favorite_added);
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
-
+                    view.showError(errorMessage);
                 }
             });
         }
     }
 
+    @Override
     public void onShareClick() {
-        if (trailers != null && !trailers.isEmpty()) {
+        boolean hasTrailers = trailers != null && !trailers.isEmpty();
+        if (hasTrailers) {
             view.prepareTrailerShare(trailers.get(0).getVideoUrl());
         }
     }
 
+    @Override
     public void validateMenu() {
-        if (trailers != null && !trailers.isEmpty()) {
-            view.showShareMenu(true);
-        } else {
-            view.showShareMenu(false);
-        }
+        boolean hasTrailers = trailers != null && !trailers.isEmpty();
+        view.showShareMenu(hasTrailers);
     }
 
-    // State
+    // Presenter State
 
+    @Override
     public Movie getMovie() {
         return movie;
     }
 
+    @Override
     public ArrayList<Trailer> getTrailers() {
         return trailers;
     }
 
+    @Override
     public ArrayList<Review> getReviews() {
         return reviews;
     }
 
+    @Override
     public void loadPresenterState(Movie movie, ArrayList<Trailer> trailers, ArrayList<Review> reviews) {
         this.movie = movie;
         this.trailers = trailers;

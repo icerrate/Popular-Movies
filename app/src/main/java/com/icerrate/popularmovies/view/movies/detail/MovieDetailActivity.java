@@ -1,16 +1,20 @@
 package com.icerrate.popularmovies.view.movies.detail;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +22,8 @@ import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.view.common.BaseActivity;
 import com.icerrate.popularmovies.view.common.GlideApp;
+
+import butterknife.BindView;
 
 import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.KEY_MOVIE;
 
@@ -27,15 +33,25 @@ import static com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.
 
 public class MovieDetailActivity extends BaseActivity implements MovieDetailFragmentListener {
 
-    private ImageView backdropImageView;
+    private static final long FAVORITE_ICON_OFFSET = 200;
 
-    private AppBarLayout appBarLayout;
+    @BindView(R.id.backdrop)
+    @Nullable
+    public ImageView backdropImageView;
 
-    private View titleLayout;
+    @BindView(R.id.app_bar)
+    public AppBarLayout appBarLayout;
 
-    private TextView titleTextView;
+    @BindView(R.id.layout_title)
+    @Nullable
+    public View titleLayout;
 
-    private FloatingActionButton favoriteFab;
+    @BindView(R.id.title)
+    @Nullable
+    public TextView titleTextView;
+
+    @BindView(R.id.favorite)
+    public FloatingActionButton favoriteFab;
 
     private Integer result;
 
@@ -54,35 +70,16 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
             MovieDetailFragment movieDetailFragment = MovieDetailFragment.newInstance(movie);
             replaceFragment(R.id.content, movieDetailFragment);
         }
-
-        backdropImageView = findViewById(R.id.backdrop);
-        appBarLayout = findViewById(R.id.app_bar);
-        titleLayout = findViewById(R.id.layout_title);
-        titleTextView = findViewById(R.id.title);
-        favoriteFab = findViewById(R.id.favorite);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
+    @SuppressLint("RestrictedApi")
     @Override
     public void onBackPressed() {
+        favoriteFab.setVisibility(View.INVISIBLE);
         if (result != null) {
             setResult(result);
         }
-        finish();
+        super.onBackPressed();
     }
 
     @Override
@@ -153,12 +150,16 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
     }
 
     @Override
-    public void updateFavoriteIcon(int icon) {
-        favoriteFab.setImageResource(icon);
+    public void setFavoriteState(boolean isFavorite) {
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.bounce_anim);
+        animation.setStartOffset(FAVORITE_ICON_OFFSET);
+        favoriteFab.startAnimation(animation);
+        favoriteFab.setSelected(isFavorite);
     }
 
     @Override
-    public void notifyUpdate() {
+    public void updateFavoriteState(boolean isFavorite) {
+        favoriteFab.setSelected(isFavorite);
         result = Activity.RESULT_OK;
     }
 }

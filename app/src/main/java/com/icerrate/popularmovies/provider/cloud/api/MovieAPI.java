@@ -23,6 +23,10 @@ public interface MovieAPI {
     @GET(ServerPaths.TOP_RATED_MOVIES)
     Call<PaginatedResponse<Movie>> getTopRatedMovies(@Query(ServerPaths.QUERY_PAGE) Integer page);
 
+    @GET(ServerPaths.SEARCH_MOVIES)
+    Call<PaginatedResponse<Movie>> searchMovies(@Query(ServerPaths.QUERY_STRING) String query,
+                                                @Query(ServerPaths.QUERY_PAGE) Integer page);
+
     @GET(ServerPaths.TRAILERS_MOVIES)
     Call<TrailersResponse<Trailer>> getMovieTrailers(@Path(ServerPaths.MOVIE_ID) Integer movieId);
 

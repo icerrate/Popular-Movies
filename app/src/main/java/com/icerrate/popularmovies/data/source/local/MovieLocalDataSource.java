@@ -53,6 +53,11 @@ public class MovieLocalDataSource implements MovieDataSource {
     }
 
     @Override
+    public void searchMovies(String quey, Integer page, BaseCallback<PaginatedResponse<Movie>> callback) {
+        throw new UnsupportedOperationException("Operation is not available!");
+    }
+
+    @Override
     public void getMovieTrailers(Integer movieId, BaseCallback<TrailersResponse<Trailer>> callback) {
         throw new UnsupportedOperationException("Operation is not available!");
     }

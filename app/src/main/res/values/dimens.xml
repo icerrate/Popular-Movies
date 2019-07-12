@@ -5,7 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="extra_line_space">4dp</dimen>
     <dimen name="extra_double_line_space">8dp</dimen>
-    <dimen name="overlap_top_extra">48dp</dimen>
+    <dimen name="overlap_top_extra">40dp</dimen>
     <dimen name="overlap_top">30dp</dimen>
     <dimen name="footer_height">80dp</dimen>
     <dimen name="progress_size">60dp</dimen>

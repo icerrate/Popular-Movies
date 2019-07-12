@@ -13,6 +13,7 @@ import com.icerrate.popularmovies.data.model.Trailer;
 import com.icerrate.popularmovies.view.common.GlideApp;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ivan Cerrate.
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerViewHolder> {
 
-    private ArrayList<Trailer> items;
+    private List<Trailer> items;
 
     private OnItemClickListener onItemClickListener;
 
@@ -28,7 +29,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         this(new ArrayList<Trailer>(), onItemClickListener);
     }
 
-    public TrailersAdapter(ArrayList<Trailer> items, OnItemClickListener onItemClickListener) {
+    public TrailersAdapter(List<Trailer> items, OnItemClickListener onItemClickListener) {
         this.items = items;
         this.onItemClickListener = onItemClickListener;
     }
@@ -55,7 +56,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         return items.size();
     }
 
-    public void addItems(ArrayList<Trailer> items) {
+    public void addItems(List<Trailer> items) {
         this.items.addAll(items);
         notifyDataSetChanged();
     }

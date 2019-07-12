@@ -23,7 +23,6 @@ public class FormatUtils {
                 SimpleDateFormat outformat = new SimpleDateFormat(outputFormat);
                 return outformat.format(newDate);
             } catch (ParseException e) {
-                e.printStackTrace();
                 return null;
             }
         } else {

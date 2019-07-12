@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewStub;
 
 import com.icerrate.popularmovies.R;
-import com.icerrate.popularmovies.utils.DialogUtils;
+import com.icerrate.popularmovies.utils.ViewUtils;
 
 import butterknife.BindView;
 
@@ -94,17 +94,12 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
     @Override
     public void showError(String errorMessage) {
-        DialogUtils.createSnackbar(getView(), errorMessage, Snackbar.LENGTH_SHORT).show();
+        ViewUtils.createSnackbar(getView(), errorMessage, Snackbar.LENGTH_SHORT).show();
     }
 
 
     @Override
-    public void showSnackbarMessage(String message) {
-        DialogUtils.createSnackbar(getView(), message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public Context getContext() {
-        return getActivity();
+    public void showSnackbarMessage(int resId) {
+        ViewUtils.createSnackbar(getView(), resId, Snackbar.LENGTH_SHORT).show();
     }
 }

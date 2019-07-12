@@ -2,6 +2,7 @@ package com.icerrate.popularmovies.provider.cloud;
 
 import android.util.Log;
 
+
 import com.icerrate.popularmovies.view.common.BaseCallback;
 
 import java.io.IOException;

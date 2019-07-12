@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
  * @author Ivan Cerrate.
  */
 
-public class MovieDetailFragment extends BaseFragment implements MovieDetailView,
+public class MovieDetailFragment extends BaseFragment implements MovieDetailContract.View,
         TrailersAdapter.OnItemClickListener, ReviewsAdapter.OnButtonClickListener {
 
     public static String KEY_MOVIE = "MOVIE_KEY";
@@ -136,7 +136,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
             Movie movie = getArguments().getParcelable(KEY_MOVIE);
             presenter.setMovieDetail(movie);
         }
-        presenter.loadView();
+        presenter.loadMovieDetails();
     }
 
     @Override
@@ -148,14 +148,13 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.share:
-                presenter.onShareClick();
-                return true;
-            default:
-                return false;
+        if (item.getItemId() == R.id.share ) {
+            presenter.onShareClick();
+            return true;
         }
+        return false;
     }
+
     @Override
     protected void saveInstanceState(Bundle outState) {
         outState.putParcelable(KEY_MOVIE, presenter.getMovie());
@@ -173,47 +172,23 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     private void setupView() {
         //Trailers
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.HORIZONTAL, false);
         trailersAdapter = new TrailersAdapter(this);
         trailersRecyclerView.setAdapter(trailersAdapter);
-        trailersRecyclerView.setLayoutManager(horizontalLayoutManager);
-        BaseItemDecoration mDividerItemDecoration = new BaseItemDecoration(
-                getContext().getResources().getDrawable(R.drawable.decorator_white));
-        trailersRecyclerView.addItemDecoration(mDividerItemDecoration);
+        trailersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL, false));
+        trailersRecyclerView.addItemDecoration(new BaseItemDecoration(
+                getResources().getDrawable(R.drawable.horizontal_decorator)));
         trailersRecyclerView.setNestedScrollingEnabled(false);
         //Reviews
-        LinearLayoutManager verticalLayoutManager = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false);
         reviewsAdapter = new ReviewsAdapter(this);
         reviewsRecyclerView.setAdapter(reviewsAdapter);
-        reviewsRecyclerView.setLayoutManager(verticalLayoutManager);
-        mDividerItemDecoration = new BaseItemDecoration(
-                getContext().getResources().getDrawable(R.drawable.decorator_gray));
-        reviewsRecyclerView.addItemDecoration(mDividerItemDecoration);
+        reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false));
         reviewsRecyclerView.setNestedScrollingEnabled(false);
     }
 
     @Override
-    public void onItemClick(View view) {
-        Trailer trailer = (Trailer) view.getTag();
-        if (trailer != null) {
-            startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(trailer.getVideoUrl())));
-        }
-    }
-
-    @Override
-    public void onButtonClick(View view) {
-        Review review = (Review) view.getTag();
-        if (review != null) {
-            startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(review.getUrl())));
-        }
-    }
-
-    @Override
-    public void showMovieDetail(String title, String releaseDate, String posterUrl, String backdropUrl, String rating, String synopsis) {
+    public void showHeader(String title, String releaseDate, String posterUrl, String backdropUrl, String rating, String synopsis) {
         movieDetailFragmentListener.setBackdropImage(backdropUrl);
         movieDetailFragmentListener.setCollapsingTitle(title);
         movieDetailFragmentListener.setFavoriteOnClickListener(new View.OnClickListener() {
@@ -228,7 +203,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
                 .placeholder(getResources().getDrawable(R.drawable.poster_placeholder))
                 .into(posterImageView);
         releaseDateTextView.setText(releaseDate);
-        ratingTextView.setText(rating);
+        ratingTextView.setText(getString(R.string.rating, rating));
         synopsisTextView.setText(synopsis);
     }
 
@@ -253,13 +228,13 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     }
 
     @Override
-    public void updateFavoriteIcon(int iconId) {
-        movieDetailFragmentListener.updateFavoriteIcon(iconId);
+    public void showFavoriteState(boolean isFavorite) {
+        movieDetailFragmentListener.setFavoriteState(isFavorite);
     }
 
     @Override
-    public void notifyUpdate() {
-        movieDetailFragmentListener.notifyUpdate();
+    public void updateFavoriteState(boolean isFavorite) {
+        movieDetailFragmentListener.updateFavoriteState(isFavorite);
     }
 
     @Override
@@ -274,6 +249,24 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public void showShareMenu(boolean show) {
         if (shareMenuItem != null) {
             shareMenuItem.setVisible(show);
+        }
+    }
+
+    @Override
+    public void onItemClick(View view) {
+        Trailer trailer = (Trailer) view.getTag();
+        if (trailer != null) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(trailer.getVideoUrl())));
+        }
+    }
+
+    @Override
+    public void onPlayButtonClick(View view) {
+        Review review = (Review) view.getTag();
+        if (review != null) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(review.getUrl())));
         }
     }
 }

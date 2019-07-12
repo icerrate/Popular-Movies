@@ -1,11 +1,9 @@
-package com.icerrate.popularmovies.view.movies;
+package com.icerrate.popularmovies.view.movies.catalog;
 
-import com.icerrate.popularmovies.R;
 import com.icerrate.popularmovies.data.model.Movie;
 import com.icerrate.popularmovies.data.model.PaginatedResponse;
 import com.icerrate.popularmovies.data.source.MovieRepository;
 import com.icerrate.popularmovies.view.common.BaseCallback;
-import com.icerrate.popularmovies.view.common.BasePresenter;
 
 import java.util.ArrayList;
 
@@ -13,7 +11,9 @@ import java.util.ArrayList;
  * @author Ivan Cerrate.
  */
 
-public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
+public class MoviesCatalogPresenter implements MoviesCatalogContract.Presenter {
+
+    private final static int PAGINATION = 1;
 
     public enum SortType {
         MOST_POPULAR,
@@ -21,41 +21,66 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
         FAVORITE
     }
 
-    private SortType sortType;
+    private SortType sortType = SortType.MOST_POPULAR;
 
     private PaginatedResponse<Movie> moviesPaginatedResponse = new PaginatedResponse<>();
 
+    private MoviesCatalogContract.View view;
+
     private MovieRepository movieRepository;
 
-    public MoviesCatalogPresenter(MoviesCatalogView view, MovieRepository movieRepository) {
-        super(view);
+    public MoviesCatalogPresenter(MoviesCatalogContract.View view, MovieRepository movieRepository) {
+        this.view = view;
         this.movieRepository = movieRepository;
     }
 
-    public void loadNextMoviesPage() {
-        view.showFooterProgress(true);
-        boolean isLastPage = moviesPaginatedResponse.isLastPage();
-        if (!isLastPage) {
-            getMovies(false);
+    @Override
+    public void loadMovies() {
+        if (moviesPaginatedResponse.getPage() == 0) {
+            refreshMovies();
         } else {
-            view.showFooterProgress(false);
+            view.resetMovies();
+            view.showMovies(moviesPaginatedResponse.getResults());
         }
     }
 
-    public void loadMovies() {
-        view.showMovies(moviesPaginatedResponse.getResults());
+    @Override
+    public void loadMoviesBySortType(SortType sortType) {
+        this.sortType = sortType;
+        view.showProgressBar(true);
+        loadMovies();
     }
 
-    public void onSwipeMovies() {
+    @Override
+    public void loadNextMoviesPage() {
+        view.showFooterProgress(true);
+        boolean isLastPage = moviesPaginatedResponse.isLastPage();
+        if (isLastPage) {
+            view.showFooterProgress(false);
+        } else {
+            getMovies(false);
+        }
+    }
+
+    @Override
+    public void refreshMovies() {
         moviesPaginatedResponse = new PaginatedResponse<>();
         getMovies(true);
     }
 
-    public void refreshMovies() {
+    @Override
+    public void refreshMoviesBySortType(SortType sortType) {
+        this.sortType = sortType;
         resetMovies();
         view.showProgressBar(true);
-        moviesPaginatedResponse = new PaginatedResponse<>();
         getMovies(true);
+    }
+
+    @Override
+    public void onBackFromDetail() {
+        if (sortType == SortType.FAVORITE) {
+            refreshMovies();
+        }
     }
 
     private void getMovies(boolean force) {
@@ -73,7 +98,8 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
     }
 
     private void getInternalPopularMovies(final boolean force) {
-        Integer currentPage = moviesPaginatedResponse.getPage() != null ? moviesPaginatedResponse.getPage()+1 : 1;
+        Integer page = moviesPaginatedResponse.getPage() != null ? moviesPaginatedResponse.getPage()+1 : 1;
+        Integer currentPage = force ? 1 : page;
         movieRepository.getPopularMovies(currentPage, new BaseCallback<PaginatedResponse<Movie>>() {
             @Override
             public void onSuccess(PaginatedResponse<Movie> response) {
@@ -85,23 +111,21 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                         response.getTotalResults(),
                         response.getTotalPages());
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
-                showMovies(response.getResults(), getStringRes(R.string.movies_no_data));
+                showMovies(response.getResults());
                 finishLoading();
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
-                if (moviesPaginatedResponse.getResults().isEmpty()) {
-                    view.showNoDataView(true, getStringRes(R.string.movies_no_data));
-                }
                 finishLoading();
             }
         });
     }
 
     private void getInternalTopRatedMovies(final boolean force) {
-        Integer currentPage = moviesPaginatedResponse.getPage() != null ? moviesPaginatedResponse.getPage()+1 : 1;
+        Integer page = moviesPaginatedResponse.getPage() != null ? moviesPaginatedResponse.getPage()+1 : 1;
+        Integer currentPage = force ? 1 : page;
         movieRepository.getTopRatedMovies(currentPage, new BaseCallback<PaginatedResponse<Movie>>() {
             @Override
             public void onSuccess(PaginatedResponse<Movie> response) {
@@ -113,16 +137,13 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                         response.getTotalResults(),
                         response.getTotalPages());
                 moviesPaginatedResponse.getResults().addAll(response.getResults());
-                showMovies(response.getResults(), getStringRes(R.string.movies_no_data));
+                showMovies(response.getResults());
                 finishLoading();
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
-                if (moviesPaginatedResponse.getResults().isEmpty()) {
-                    view.showNoDataView(true, getStringRes(R.string.movies_no_data));
-                }
                 finishLoading();
             }
         });
@@ -135,30 +156,27 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
                 if (force) {
                     resetMovies();
                 }
-                moviesPaginatedResponse.setMeta(1, response.size(), 1);
+                moviesPaginatedResponse.setMeta(PAGINATION, response.size(), PAGINATION);
                 moviesPaginatedResponse.getResults().addAll(response);
-                showMovies(response, getStringRes(R.string.movies_no_data));
+                showMovies(response);
                 finishLoading();
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 view.showError(errorMessage);
-                if (moviesPaginatedResponse.getResults().isEmpty()) {
-                    view.showNoDataView(true, getStringRes(R.string.movies_no_data));
-                }
                 finishLoading();
             }
         });
     }
 
-    public void showMovies(ArrayList<Movie> movies, String noDataText) {
+    private void showMovies(ArrayList<Movie> movies) {
         if (movies != null && !movies.isEmpty()) {
-            view.showNoDataView(false, null);
+            view.showNoDataView(false);
             view.showMovies(movies);
         } else {
             if (moviesPaginatedResponse.getResults().isEmpty()) {
-                view.showNoDataView(true, noDataText);
+                view.showNoDataView(true);
             }
         }
     }
@@ -170,10 +188,11 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
     }
 
     private void resetMovies() {
-        view.resetMovies();
         moviesPaginatedResponse = new PaginatedResponse<>();
+        view.resetMovies();
     }
 
+    @Override
     public void onMovieItemClick(final Movie movie) {
         movieRepository.isFavoriteMovie(movie.getId(), new BaseCallback<Boolean>() {
             @Override
@@ -184,24 +203,24 @@ public class MoviesCatalogPresenter extends BasePresenter<MoviesCatalogView> {
 
             @Override
             public void onFailure(String errorMessage) {
-
+                view.showError(errorMessage);
             }
         });
     }
 
-    public void setSortType(SortType sortType) {
-        this.sortType = sortType;
-    }
-
+    @Override
     public SortType getSortType() {
         return sortType;
     }
 
+    @Override
     public PaginatedResponse<Movie> getMoviesPaginatedResponse() {
         return moviesPaginatedResponse;
     }
 
-    public void loadPresenterState(SortType sortType, PaginatedResponse<Movie> moviePaginatedResponse) {
+    @Override
+    public void loadPresenterState(SortType sortType,
+                                   PaginatedResponse<Movie> moviePaginatedResponse) {
         this.sortType = sortType;
         this.moviesPaginatedResponse = moviePaginatedResponse;
     }

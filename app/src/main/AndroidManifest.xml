@@ -9,19 +9,25 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.movies.MoviesCatalogActivity"
+            android:name=".view.movies.catalog.MoviesCatalogActivity"
             android:label="@string/title_activity_movies"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".view.movies.search.SearchMoviesActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
             android:name=".view.movies.detail.MovieDetailActivity"
-            android:label="@string/title_activity_movie_detail"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <provider

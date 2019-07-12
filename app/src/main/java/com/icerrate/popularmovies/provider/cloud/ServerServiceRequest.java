@@ -17,8 +17,8 @@ public class ServerServiceRequest<T> extends ServiceRequest<T> {
     }
 
     @Override
-    void enqueue(BaseCallback<T> baseCallback) {
-        call.enqueue(new RetrofitCallback<>(baseCallback));
+    void enqueue(BaseCallback<T> callback) {
+        call.enqueue(new RetrofitCallback<>(callback));
     }
 
     @Override

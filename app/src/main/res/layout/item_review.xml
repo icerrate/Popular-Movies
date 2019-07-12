@@ -1,37 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_marginStart="@dimen/view_margin_small"
+    android:layout_marginEnd="@dimen/view_margin_small"
+    android:layout_marginBottom="@dimen/view_margin_small"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/author"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/view_margin_small"
-        android:textStyle="bold"
-        tools:text="@string/preview_author" />
+        android:layout_marginStart="@dimen/view_margin"
+        android:layout_marginTop="@dimen/view_margin"
+        android:layout_marginEnd="@dimen/view_margin">
 
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/author"
-        android:layout_marginTop="@dimen/extra_double_line_space"
-        android:ellipsize="end"
-        android:maxLines="5"
-        tools:text="@string/preview_content" />
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_margin_small"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/preview_author" />
 
-    <Button
-        android:id="@+id/visit"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/content"
-        android:text="@string/review_on_web_button"
-        android:textColor="@color/colorAccent"
-        android:theme="@style/FlatButton" />
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/author"
+            android:layout_marginTop="@dimen/extra_double_line_space"
+            android:ellipsize="end"
+            android:maxLines="5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/author"
+            tools:text="@string/preview_content" />
 
-</RelativeLayout>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/visit"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/review_on_web_button"
+            android:textColor="@color/colorAccent"
+            android:theme="@style/FlatButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/content" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>

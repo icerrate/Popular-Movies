@@ -46,6 +46,11 @@ public class MovieRepository implements MovieDataSource {
     }
 
     @Override
+    public void searchMovies(String query, Integer page, BaseCallback<PaginatedResponse<Movie>> callback) {
+        remoteDataSource.searchMovies(query, page, callback);
+    }
+
+    @Override
     public void getMovieTrailers(Integer movieId, BaseCallback<TrailersResponse<Trailer>> callback) {
         remoteDataSource.getMovieTrailers(movieId, callback);
     }
