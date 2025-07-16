@@ -20,8 +20,8 @@ import com.icerrate.popularmovies.provider.db.MovieDBHelper.Companion.SYNOPSIS_C
 import com.icerrate.popularmovies.provider.db.MovieDBHelper.Companion.TABLE_FAVORITE
 import com.icerrate.popularmovies.provider.db.MovieDBHelper.Companion.TITLE_COLUMN
 import com.icerrate.popularmovies.provider.db.MovieDBHelper.Companion.VOTE_AVERAGE_COLUMN
-import com.icerrate.popularmovies.view.common.BaseCallback
 import androidx.core.net.toUri
+import com.icerrate.popularmovies.data.model.Resource
 
 /**
  * @author Ivan Cerrate.
@@ -29,31 +29,26 @@ import androidx.core.net.toUri
 class MovieLocalDataSource(private val context: Context) : MovieDataSource {
 
     companion object {
-        private val stringUri = "content://${BuildConfig.APPLICATION_ID}.provider.db/$TABLE_FAVORITE"
-        private val contentResolverUri: Uri = Uri.parse(stringUri)
+        private const val STRING_URI = "content://${BuildConfig.APPLICATION_ID}.provider.db/$TABLE_FAVORITE"
+        private val contentResolverUri: Uri = STRING_URI.toUri()
     }
 
-    override fun getPopularMovies(page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>) {
+    override suspend fun getPopularMovies(page: Int?): Resource<PaginatedResponse<Movie>> =
         throw UnsupportedOperationException("Operation is not available!")
-    }
 
-    override fun getTopRatedMovies(page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>) {
+    override suspend fun getTopRatedMovies(page: Int?): Resource<PaginatedResponse<Movie>> =
         throw UnsupportedOperationException("Operation is not available!")
-    }
 
-    override fun searchMovies(query: String, page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>) {
+    override suspend fun searchMovies(query: String, page: Int?): Resource<PaginatedResponse<Movie>> =
         throw UnsupportedOperationException("Operation is not available!")
-    }
 
-    override fun getMovieTrailers(movieId: Int?, callback: BaseCallback<TrailersResponse<Trailer>>) {
+    override suspend fun getMovieTrailers(movieId: Int?): Resource<TrailersResponse<Trailer>> =
         throw UnsupportedOperationException("Operation is not available!")
-    }
 
-    override fun getMovieReviews(movieId: Int?, callback: BaseCallback<PaginatedResponse<Review>>) {
+    override suspend fun getMovieReviews(movieId: Int?): Resource<PaginatedResponse<Review>> =
         throw UnsupportedOperationException("Operation is not available!")
-    }
 
-    override fun getFavoriteMovies(callback: BaseCallback<ArrayList<Movie>>) {
+    override suspend fun getFavoriteMovies(): Resource<ArrayList<Movie>> {
         val moviesList = ArrayList<Movie>()
         val contentResolver: ContentResolver = context.contentResolver
         val columns = arrayOf(
@@ -70,24 +65,32 @@ class MovieLocalDataSource(private val context: Context) : MovieDataSource {
                 val synopsis = it.getString(4) ?: ""
                 val voteAverage = it.getDouble(5)
                 val releaseDate = it.getString(6) ?: ""
-                val movie = Movie(id = id, title = title, posterPath = poster, backdropPath = backdrop, overview = synopsis, voteAverage = voteAverage, releaseDate = releaseDate)
+                val movie = Movie(
+                    id = id,
+                    title = title,
+                    posterPath = poster,
+                    backdropPath = backdrop,
+                    overview = synopsis,
+                    voteAverage = voteAverage,
+                    releaseDate = releaseDate
+                )
                 moviesList.add(movie)
             }
         }
-        callback.onSuccess(moviesList)
+        return Resource.Success(moviesList)
     }
 
-    override fun isFavoriteMovie(movieId: Int, callback: BaseCallback<Boolean>) {
+    override suspend fun isFavoriteMovie(movieId: Int): Resource<Boolean> {
         val contentResolver: ContentResolver = context.contentResolver
         val columns = arrayOf(ID_COLUMN)
         val selection = "$ID_COLUMN=?"
         val selectionArgs = arrayOf(movieId.toString())
         val cursor: Cursor? = contentResolver.query(contentResolverUri, columns, selection, selectionArgs, null)
         val isFavorite = cursor?.use { it.count > 0 } ?: false
-        callback.onSuccess(isFavorite)
+        return Resource.Success(isFavorite)
     }
 
-    override fun addFavoriteMovie(movie: Movie, callback: BaseCallback<Unit>) {
+    override suspend fun addFavoriteMovie(movie: Movie): Resource<Unit> {
         val contentResolver: ContentResolver = context.contentResolver
         val values = ContentValues().apply {
             put(ID_COLUMN, movie.id)
@@ -99,15 +102,15 @@ class MovieLocalDataSource(private val context: Context) : MovieDataSource {
             put(RELEASE_DATE_COLUMN, movie.releaseDate)
         }
         contentResolver.insert(contentResolverUri, values)
-        callback.onSuccess(Unit)
+        return Resource.Success(Unit)
     }
 
-    override fun removeFavoriteMovie(movieId: Int, callback: BaseCallback<Unit>) {
-        val uri = "$stringUri/$movieId".toUri()
+    override suspend fun removeFavoriteMovie(movieId: Int) : Resource<Unit> {
+        val uri = "$STRING_URI/$movieId".toUri()
         val contentResolver: ContentResolver = context.contentResolver
         val where = "$ID_COLUMN=?"
         val selectionArgs = arrayOf(movieId.toString())
         contentResolver.delete(uri, where, selectionArgs)
-        callback.onSuccess(Unit)
+        return Resource.Success(Unit)
     }
 }

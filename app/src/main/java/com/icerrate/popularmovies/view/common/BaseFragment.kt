@@ -17,13 +17,12 @@ typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 
 abstract class BaseFragment<V: ViewBinding>(
     private val inflate: Inflate<V>
-) : Fragment(), BaseView {
+) : Fragment() {
 
     protected lateinit var binding: V
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initPresenter()
     }
 
     override fun onCreateView(
@@ -39,10 +38,6 @@ abstract class BaseFragment<V: ViewBinding>(
         super.onSaveInstanceState(outState)
     }
 
-    protected open fun initPresenter() {
-        // Needs to be empty
-    }
-
     protected open fun saveInstanceState(outState: Bundle) {
         // Needs to be empty
     }
@@ -51,13 +46,13 @@ abstract class BaseFragment<V: ViewBinding>(
         // Needs to be empty
     }
 
-    override fun showError(errorMessage: String) {
+    protected fun showError(errorMessage: String) {
         view?.let { 
             ViewUtils.createSnackbar(it, errorMessage, Snackbar.LENGTH_SHORT).show()
         }
     }
 
-    override fun showSnackbarMessage(resId: Int) {
+    protected fun showSnackbarMessage(resId: Int) {
         view?.let {
             ViewUtils.createSnackbar(it, resId, Snackbar.LENGTH_SHORT).show()
         }

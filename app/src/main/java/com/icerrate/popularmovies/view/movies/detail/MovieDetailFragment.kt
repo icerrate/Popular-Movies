@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,11 +16,10 @@ import com.icerrate.popularmovies.data.model.Review
 import com.icerrate.popularmovies.data.model.Trailer
 import com.icerrate.popularmovies.databinding.FragmentMovieDetailBinding
 import com.icerrate.popularmovies.view.common.BaseFragment
-import com.icerrate.popularmovies.data.source.MovieRepository
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import com.icerrate.popularmovies.view.common.BaseItemDecoration
 import androidx.core.net.toUri
+import androidx.core.view.get
 
 /**
  * @author Ivan Cerrate.
@@ -27,17 +27,13 @@ import androidx.core.net.toUri
 @AndroidEntryPoint
 class MovieDetailFragment : BaseFragment<FragmentMovieDetailBinding>(
     FragmentMovieDetailBinding::inflate
-), MovieDetailContract.View,
-    TrailersAdapter.OnItemClickListener, ReviewsAdapter.OnButtonClickListener, MenuProvider {
+), TrailersAdapter.OnItemClickListener, ReviewsAdapter.OnButtonClickListener, MenuProvider {
 
     private var shareMenuItem: MenuItem? = null
     private lateinit var trailersAdapter: TrailersAdapter
     private lateinit var reviewsAdapter: ReviewsAdapter
-    private lateinit var presenter: MovieDetailPresenter
+    private val viewModel: MovieDetailViewModel by viewModels()
     private var movieDetailFragmentListener: MovieDetailFragmentListener? = null
-    
-    @Inject
-    lateinit var movieRepository: MovieRepository
 
 
     override fun onAttach(context: Context) {
@@ -48,41 +44,39 @@ class MovieDetailFragment : BaseFragment<FragmentMovieDetailBinding>(
     private fun castOrThrowException(context: Context) {
         try {
             movieDetailFragmentListener = context as MovieDetailFragmentListener
-        } catch (e: ClassCastException) {
+        } catch (_: ClassCastException) {
             throw ClassCastException("$context must implement MovieDetailFragmentListener")
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = MovieDetailPresenter(
-            this,
-            movieRepository
-        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         setupView()
+        observeViewModel()
+        
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState)
         } else {
             val movie = arguments?.getParcelable<Movie>(KEY_MOVIE)
-            movie?.let { presenter.setMovieDetail(it) }
+            movie?.let { viewModel.processIntent(MovieDetailIntent.SetMovieDetail(it)) }
         }
-        presenter.loadMovieDetails()
+        viewModel.processIntent(MovieDetailIntent.LoadMovieDetails)
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
-        shareMenuItem = menu.getItem(0)
-        presenter.validateMenu()
+        shareMenuItem = menu[0]
+        viewModel.processIntent(MovieDetailIntent.ValidateMenu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         return if (menuItem.itemId == R.id.share) {
-            presenter.onShareClick()
+            viewModel.processIntent(MovieDetailIntent.OnShareClick)
             true
         } else {
             false
@@ -90,16 +84,17 @@ class MovieDetailFragment : BaseFragment<FragmentMovieDetailBinding>(
     }
 
     override fun saveInstanceState(outState: Bundle) {
-        outState.putParcelable(KEY_MOVIE, presenter.getMovie())
-        outState.putParcelableArrayList(KEY_TRAILERS, presenter.getTrailers())
-        outState.putParcelableArrayList(KEY_REVIEWS, presenter.getReviews())
+        val currentState = viewModel.state.value
+        outState.putParcelable(KEY_MOVIE, currentState?.movie)
+        outState.putParcelableArrayList(KEY_TRAILERS, currentState?.trailers)
+        outState.putParcelableArrayList(KEY_REVIEWS, currentState?.reviews)
     }
 
     override fun restoreInstanceState(savedState: Bundle) {
         val movie = savedState.getParcelable<Movie>(KEY_MOVIE)
         val trailers = savedState.getParcelableArrayList<Trailer>(KEY_TRAILERS)
         val reviews = savedState.getParcelableArrayList<Review>(KEY_REVIEWS)
-        presenter.loadPresenterState(movie, trailers, reviews)
+        viewModel.processIntent(MovieDetailIntent.RestoreState(movie, trailers, reviews))
     }
 
     private fun setupView() {
@@ -127,64 +122,75 @@ class MovieDetailFragment : BaseFragment<FragmentMovieDetailBinding>(
         binding.reviews.isNestedScrollingEnabled = false
     }
 
-    override fun showHeader(
-        title: String,
-        releaseDate: String,
-        posterUrl: String,
-        backdropUrl: String,
-        rating: String,
-        synopsis: String
-    ) {
-        movieDetailFragmentListener?.setBackdropImage(backdropUrl)
-        movieDetailFragmentListener?.setCollapsingTitle(title)
-        movieDetailFragmentListener?.setFavoriteOnClickListener {
-            presenter.onFavoriteFabClicked()
+    private fun observeViewModel() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            handleState(state)
+        }
+    }
+
+    private fun handleState(state: MovieDetailState) {
+        // Handle movie header display
+        state.movie?.let { movie ->
+            showHeader(movie)
         }
         
-        binding.title.text = title
+        // Handle trailers
+        if (state.trailers.isNotEmpty()) {
+            trailersAdapter.addItems(state.trailers)
+            binding.trailersNoData.visibility = View.INVISIBLE
+        } else {
+            binding.trailersNoData.visibility = View.VISIBLE
+        }
+        
+        // Handle reviews
+        if (state.reviews.isNotEmpty()) {
+            reviewsAdapter.addItems(state.reviews)
+            binding.reviewsNoData.visibility = View.INVISIBLE
+        } else {
+            binding.reviewsNoData.visibility = View.VISIBLE
+        }
+        
+        // Handle share menu
+        shareMenuItem?.isVisible = state.showShareMenu
+        
+        // Handle share trailer
+        state.shareTrailerUrl?.let { trailerUrl ->
+            prepareTrailerShare(trailerUrl)
+            viewModel.onShareHandled()
+        }
+        
+        // Handle errors
+        state.errorMessage?.let { errorMessage ->
+            showError(errorMessage)
+            viewModel.onErrorHandled()
+        }
+    }
+
+    private fun showHeader(movie: Movie) {
+        movieDetailFragmentListener?.setBackdropImage(movie.getBackdropUrl(BACKDROP_CODE))
+        movieDetailFragmentListener?.setCollapsingTitle(movie.title)
+        movieDetailFragmentListener?.setFavoriteOnClickListener {
+            viewModel.processIntent(MovieDetailIntent.OnFavoriteFabClicked)
+        }
+        movieDetailFragmentListener?.setFavoriteState(movie.isFavorite)
+        
+        binding.title.text = movie.title
         Glide.with(this)
-            .load(posterUrl)
+            .load(movie.getPosterUrl(POSTER_CODE))
             .placeholder(resources.getDrawable(R.drawable.poster_placeholder))
             .into(binding.poster)
-        binding.releaseDate.text = releaseDate
+        binding.releaseDate.text = movie.releaseDate
+        val rating = "%.1f".format(movie.voteAverage)
         binding.rating.text = getString(R.string.rating, rating)
-        binding.synopsis.text = synopsis
+        binding.synopsis.text = movie.overview
     }
 
-    override fun showTrailers(trailers: ArrayList<Trailer>) {
-        trailersAdapter.addItems(trailers)
-    }
-
-    override fun showTrailersNoData(show: Boolean) {
-        binding.trailersNoData.visibility = if (show) View.VISIBLE else View.INVISIBLE
-    }
-
-    override fun showReviews(reviews: ArrayList<Review>) {
-        reviewsAdapter.addItems(reviews)
-    }
-
-    override fun showReviewsNoData(show: Boolean) {
-        binding.reviewsNoData.visibility = if (show) View.VISIBLE else View.INVISIBLE
-    }
-
-    override fun showFavoriteState(isFavorite: Boolean) {
-        movieDetailFragmentListener?.setFavoriteState(isFavorite)
-    }
-
-    override fun updateFavoriteState(isFavorite: Boolean) {
-        movieDetailFragmentListener?.updateFavoriteState(isFavorite)
-    }
-
-    override fun prepareTrailerShare(trailerUrl: String) {
+    private fun prepareTrailerShare(trailerUrl: String) {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, trailerUrl)
         }
         startActivity(Intent.createChooser(shareIntent, "Share Trailer link using"))
-    }
-
-    override fun showShareMenu(show: Boolean) {
-        shareMenuItem?.isVisible = show
     }
 
     override fun onItemClick(view: View) {
@@ -205,6 +211,9 @@ class MovieDetailFragment : BaseFragment<FragmentMovieDetailBinding>(
         const val KEY_MOVIE = "MOVIE_KEY"
         const val KEY_TRAILERS = "TRAILERS_KEY"
         const val KEY_REVIEWS = "REVIEWS_KEY"
+
+        private const val POSTER_CODE = "w500"
+        private const val BACKDROP_CODE = "w780"
 
         fun newInstance(movie: Movie): MovieDetailFragment {
             val bundle = Bundle().apply {

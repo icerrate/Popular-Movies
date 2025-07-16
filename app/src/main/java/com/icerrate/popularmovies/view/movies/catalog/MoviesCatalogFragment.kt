@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.icerrate.popularmovies.databinding.FragmentMoviesCatalogBinding
@@ -17,12 +18,9 @@ import com.icerrate.popularmovies.R
 import com.icerrate.popularmovies.data.model.Movie
 import com.icerrate.popularmovies.data.model.PaginatedResponse
 import com.icerrate.popularmovies.utils.ViewUtils
-import com.icerrate.popularmovies.data.source.MovieRepository
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import com.icerrate.popularmovies.view.common.BaseFragment
 import com.icerrate.popularmovies.view.common.EndlessRecyclerOnScrollListener
-import com.icerrate.popularmovies.view.movies.catalog.MoviesCatalogPresenter.SortType
 import com.icerrate.popularmovies.view.movies.detail.MovieDetailActivity
 import com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.Companion.KEY_MOVIE
 import com.icerrate.popularmovies.view.movies.search.SearchMoviesActivity
@@ -33,32 +31,24 @@ import com.icerrate.popularmovies.view.movies.search.SearchMoviesActivity
 @AndroidEntryPoint
 class MoviesCatalogFragment : BaseFragment<FragmentMoviesCatalogBinding>(
     FragmentMoviesCatalogBinding::inflate
-), MoviesCatalogContract.View,
-    MoviesCatalogAdapter.OnItemClickListener, MenuProvider {
+), MoviesCatalogAdapter.OnItemClickListener, MenuProvider {
 
     private lateinit var adapter: MoviesCatalogAdapter
     private lateinit var endlessRecyclerOnScrollListener: EndlessRecyclerOnScrollListener
-    private lateinit var presenter: MoviesCatalogPresenter
+    private val viewModel: MoviesCatalogViewModel by viewModels()
     private var selectedMoviePoster: ImageView? = null
     
     private lateinit var movieDetailLauncher: ActivityResultLauncher<Intent>
-    
-    @Inject
-    lateinit var movieRepository: MovieRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = MoviesCatalogPresenter(
-            this,
-            movieRepository
-        )
         
         // Initialize the ActivityResultLauncher
         movieDetailLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
-                presenter.onBackFromDetail()
+                viewModel.processIntent(MoviesCatalogIntent.OnBackFromDetail)
             }
         }
     }
@@ -67,21 +57,24 @@ class MoviesCatalogFragment : BaseFragment<FragmentMoviesCatalogBinding>(
         super.onViewCreated(view, savedInstanceState)
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         setupView()
+        observeViewModel()
+        
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState)
-            presenter.loadMovies()
+            viewModel.processIntent(MoviesCatalogIntent.LoadMovies)
         } else {
-            presenter.loadMoviesBySortType(SortType.MOST_POPULAR)
+            viewModel.processIntent(MoviesCatalogIntent.LoadMoviesBySortType(SortType.MOST_POPULAR))
         }
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu_movies_catalog, menu)
-        val currentSortType = presenter.getSortType()
-        when (currentSortType) {
+        val currentState = viewModel.state.value
+        when (currentState?.sortType) {
             SortType.MOST_POPULAR -> menu.findItem(R.id.popular).isChecked = true
             SortType.HIGHEST_RATED -> menu.findItem(R.id.top_rated).isChecked = true
             SortType.FAVORITE -> menu.findItem(R.id.favorite).isChecked = true
+            null -> menu.findItem(R.id.popular).isChecked = true
         }
     }
 
@@ -97,20 +90,21 @@ class MoviesCatalogFragment : BaseFragment<FragmentMoviesCatalogBinding>(
             }
             else -> return false
         }
-        presenter.refreshMoviesBySortType(selectedSortType)
+        viewModel.processIntent(MoviesCatalogIntent.RefreshMoviesBySortType(selectedSortType))
         menuItem.isChecked = true
         return true
     }
 
     override fun saveInstanceState(outState: Bundle) {
-        outState.putSerializable(KEY_SORT_TYPE, presenter.getSortType())
-        outState.putParcelable(KEY_PAGINATED_MOVIES, presenter.getMoviesPaginatedResponse())
+        val currentState = viewModel.state.value
+        outState.putSerializable(KEY_SORT_TYPE, currentState?.sortType ?: SortType.MOST_POPULAR)
+        outState.putParcelable(KEY_PAGINATED_MOVIES, currentState?.paginatedResponse)
     }
 
     override fun restoreInstanceState(savedState: Bundle) {
         val sortType = savedState.getSerializable(KEY_SORT_TYPE) as SortType
         val moviesPaginatedResponse = savedState.getParcelable<PaginatedResponse<Movie>>(KEY_PAGINATED_MOVIES)
-        presenter.loadPresenterState(sortType, moviesPaginatedResponse)
+        viewModel.processIntent(MoviesCatalogIntent.RestoreState(sortType, moviesPaginatedResponse))
     }
 
     private fun setupView() {
@@ -119,7 +113,7 @@ class MoviesCatalogFragment : BaseFragment<FragmentMoviesCatalogBinding>(
         val gridLayoutManager = GridLayoutManager(context, columns)
         endlessRecyclerOnScrollListener = object : EndlessRecyclerOnScrollListener(gridLayoutManager) {
             override fun onLoadMore() {
-                presenter.loadNextMoviesPage()
+                viewModel.processIntent(MoviesCatalogIntent.LoadNextMoviesPage)
             }
         }
         adapter = MoviesCatalogAdapter(onItemClickListener = this, columns = columns)
@@ -129,34 +123,59 @@ class MoviesCatalogFragment : BaseFragment<FragmentMoviesCatalogBinding>(
         
         // Refresh
         binding.refresh.apply {
-            setOnRefreshListener { presenter.refreshMovies() }
+            setOnRefreshListener { viewModel.processIntent(MoviesCatalogIntent.RefreshMovies) }
             setColorSchemeColors(resources.getColor(R.color.colorAccent))
         }
     }
 
 
-    override fun resetMovies() {
-        adapter.resetItems()
-        adapter.setLoading(false)
-        endlessRecyclerOnScrollListener.setLoading(false)
+    private fun observeViewModel() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            handleState(state)
+        }
     }
 
-    override fun showMovies(movies: ArrayList<Movie>) {
-        adapter.addItems(movies)
-        endlessRecyclerOnScrollListener.setLoading(false)
+    private fun handleState(state: MoviesCatalogState) {
+        // Handle loading states
+        binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+        binding.refresh.isRefreshing = state.isRefreshing
+        binding.footerProgress.visibility = if (state.isLoadingNextPage) View.VISIBLE else View.GONE
+        
+        // Handle movies display
+        if (state.movies.isNotEmpty()) {
+            adapter.resetItems()
+            adapter.addItems(ArrayList(state.movies))
+            binding.moviesNoData.visibility = View.GONE
+        } else {
+            adapter.resetItems()
+        }
+        
+        // Handle no data view
+        if (state.showNoDataView) {
+            binding.moviesNoData.visibility = View.VISIBLE
+            binding.moviesNoData.text = getString(R.string.movies_no_data)
+        } else {
+            binding.moviesNoData.visibility = View.GONE
+        }
+        
+        // Handle loading states for adapter
+        adapter.setLoading(state.isLoadingNextPage)
+        endlessRecyclerOnScrollListener.setLoading(state.isLoadingNextPage)
+        
+        // Handle navigation
+        state.navigateToMovieDetail?.let { movie ->
+            goToMovieDetail(movie)
+            viewModel.onNavigationHandled()
+        }
+        
+        // Handle errors
+        state.errorMessage?.let { errorMessage ->
+            showError(errorMessage)
+            viewModel.onErrorHandled()
+        }
     }
 
-    override fun showNoDataView(show: Boolean) {
-        binding.moviesNoData.visibility = if (show) View.VISIBLE else View.GONE
-        binding.moviesNoData.text = getString(R.string.movies_no_data)
-    }
-
-    override fun showFooterProgress(show: Boolean) {
-        adapter.setLoading(show)
-        binding.footerProgress.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    override fun goToMovieDetail(movie: Movie) {
+    private fun goToMovieDetail(movie: Movie) {
         selectedMoviePoster?.let { poster ->
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 requireActivity(),
@@ -173,17 +192,10 @@ class MoviesCatalogFragment : BaseFragment<FragmentMoviesCatalogBinding>(
         val movie = view.tag as? Movie
         movie?.let {
             selectedMoviePoster = view.findViewById(R.id.poster)
-            presenter.onMovieItemClick(it)
+            viewModel.processIntent(MoviesCatalogIntent.OnMovieItemClick(it))
         }
     }
 
-    override fun showProgressBar(show: Boolean) {
-        binding.progress.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    override fun showRefreshLayout(show: Boolean) {
-        binding.refresh.isRefreshing = show
-    }
 
     companion object {
         const val KEY_SORT_TYPE = "SORT_TYPE_KEY"
