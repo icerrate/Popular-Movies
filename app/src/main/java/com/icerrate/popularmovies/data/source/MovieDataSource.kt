@@ -2,10 +2,10 @@ package com.icerrate.popularmovies.data.source
 
 import com.icerrate.popularmovies.data.model.Movie
 import com.icerrate.popularmovies.data.model.PaginatedResponse
+import com.icerrate.popularmovies.data.model.Resource
 import com.icerrate.popularmovies.data.model.Review
 import com.icerrate.popularmovies.data.model.Trailer
 import com.icerrate.popularmovies.data.model.TrailersResponse
-import com.icerrate.popularmovies.view.common.BaseCallback
 
 /**
  * @author Ivan Cerrate.
@@ -13,21 +13,21 @@ import com.icerrate.popularmovies.view.common.BaseCallback
 
 interface MovieDataSource {
 
-    fun getPopularMovies(page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>)
+    suspend fun getPopularMovies(page: Int?): Resource<PaginatedResponse<Movie>>
 
-    fun getTopRatedMovies(page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>)
+    suspend fun getTopRatedMovies(page: Int?): Resource<PaginatedResponse<Movie>>
 
-    fun searchMovies(query: String, page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>)
+    suspend fun searchMovies(query: String, page: Int?): Resource<PaginatedResponse<Movie>>
 
-    fun getMovieTrailers(movieId: Int?, callback: BaseCallback<TrailersResponse<Trailer>>)
+    suspend fun getMovieTrailers(movieId: Int?): Resource<TrailersResponse<Trailer>>
 
-    fun getMovieReviews(movieId: Int?, callback: BaseCallback<PaginatedResponse<Review>>)
+    suspend fun getMovieReviews(movieId: Int?): Resource<PaginatedResponse<Review>>
 
-    fun getFavoriteMovies(callback: BaseCallback<ArrayList<Movie>>)
+    suspend fun getFavoriteMovies(): Resource<ArrayList<Movie>>
 
-    fun isFavoriteMovie(movieId: Int, callback: BaseCallback<Boolean>)
+    suspend fun isFavoriteMovie(movieId: Int): Resource<Boolean>
 
-    fun addFavoriteMovie(movie: Movie, callback: BaseCallback<Unit>)
+    suspend fun addFavoriteMovie(movie: Movie): Resource<Unit>
 
-    fun removeFavoriteMovie(movieId: Int, callback: BaseCallback<Unit>)
+    suspend fun removeFavoriteMovie(movieId: Int): Resource<Unit>
 }

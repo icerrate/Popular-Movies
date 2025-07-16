@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,8 +22,6 @@ import com.icerrate.popularmovies.R
 import com.icerrate.popularmovies.data.model.Movie
 import com.icerrate.popularmovies.data.model.PaginatedResponse
 import com.icerrate.popularmovies.utils.ViewUtils
-import com.icerrate.popularmovies.data.source.MovieRepository
-import javax.inject.Inject
 import com.icerrate.popularmovies.view.common.BaseActivity
 import com.icerrate.popularmovies.view.common.EndlessRecyclerOnScrollListener
 import com.icerrate.popularmovies.view.movies.catalog.MoviesCatalogAdapter
@@ -35,34 +34,27 @@ import com.icerrate.popularmovies.view.movies.detail.MovieDetailFragment.Compani
 @AndroidEntryPoint
 class SearchMoviesActivity : BaseActivity<ActivitySearchMoviesBinding>(
     ActivitySearchMoviesBinding::inflate
-), SearchMoviesContract.View,
-    MoviesCatalogAdapter.OnItemClickListener, MenuProvider {
+), MoviesCatalogAdapter.OnItemClickListener, MenuProvider {
 
     private var selectedMoviePoster: ImageView? = null
     private lateinit var adapter: MoviesCatalogAdapter
     private lateinit var endlessRecyclerOnScrollListener: EndlessRecyclerOnScrollListener
-    private lateinit var presenter: SearchMoviesPresenter
-    
-    @Inject
-    lateinit var movieRepository: MovieRepository
+    private val viewModel: SearchMoviesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addMenuProvider(this, this, Lifecycle.State.RESUMED)
 
         setNavigationToolbar(true)
-        presenter = SearchMoviesPresenter(
-            this,
-            movieRepository
-        )
         setupView()
         setupSearchView()
+        observeViewModel()
         
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState)
-            presenter.loadMovies()
+            viewModel.processIntent(SearchMoviesIntent.LoadMovies)
             binding.searchView.post {
-                binding.searchView.setQuery(presenter.getQuery(), false)
+                binding.searchView.setQuery(viewModel.state.value?.query ?: "", false)
             }
         }
     }
@@ -73,7 +65,7 @@ class SearchMoviesActivity : BaseActivity<ActivitySearchMoviesBinding>(
         val gridLayoutManager = GridLayoutManager(this, columns)
         endlessRecyclerOnScrollListener = object : EndlessRecyclerOnScrollListener(gridLayoutManager) {
             override fun onLoadMore() {
-                presenter.loadNextMoviesPage()
+                viewModel.processIntent(SearchMoviesIntent.LoadNextMoviesPage)
             }
         }
         adapter = MoviesCatalogAdapter(onItemClickListener = this, columns = columns)
@@ -88,66 +80,61 @@ class SearchMoviesActivity : BaseActivity<ActivitySearchMoviesBinding>(
             override fun onQueryTextSubmit(query: String): Boolean = false
 
             override fun onQueryTextChange(newText: String): Boolean {
-                presenter.searchMovies(newText)
+                viewModel.processIntent(SearchMoviesIntent.SearchMovies(newText))
                 return false
             }
         })
     }
 
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        // Menu is empty for this activity
+    private fun observeViewModel() {
+        viewModel.state.observe(this) { state ->
+            handleState(state)
+        }
     }
 
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        return false
+    private fun handleState(state: SearchMoviesState) {
+        // Handle loading
+        binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+        
+        // Handle movies
+        if (state.movies.isNotEmpty()) {
+            adapter.resetItems()
+            adapter.addItems(state.movies)
+            binding.moviesNoData.visibility = View.GONE
+        } else {
+            adapter.resetItems()
+        }
+        
+        // Handle search hint
+        if (state.showSearchHint) {
+            binding.moviesNoData.visibility = View.VISIBLE
+            binding.moviesNoData.text = getString(R.string.search_movies_hint)
+        } else if (state.showNoDataView) {
+            binding.moviesNoData.visibility = View.VISIBLE
+            binding.moviesNoData.text = getString(R.string.movies_no_data)
+        } else {
+            binding.moviesNoData.visibility = View.GONE
+        }
+        
+        // Handle loading states
+        adapter.setLoading(state.isLoadingNextPage)
+        binding.footerProgress.visibility = if (state.isLoadingNextPage) View.VISIBLE else View.GONE
+        endlessRecyclerOnScrollListener.setLoading(state.isLoadingNextPage)
+        
+        // Handle navigation
+        state.navigateToMovieDetail?.let { movie ->
+            goToMovieDetail(movie)
+            viewModel.onNavigationHandled()
+        }
+        
+        // Handle errors
+        state.errorMessage?.let { errorMessage ->
+            ViewUtils.createSnackbar(binding.toolbar, errorMessage, Snackbar.LENGTH_SHORT).show()
+            viewModel.onErrorHandled()
+        }
     }
 
-    override fun saveInstanceState(outState: Bundle) {
-        outState.putString(KEY_SEARCH_QUERY, presenter.getQuery())
-        outState.putParcelable(KEY_PAGINATED_MOVIES, presenter.getMoviesPaginatedResponse())
-    }
-
-    override fun restoreInstanceState(savedState: Bundle) {
-        val query = savedState.getString(KEY_SEARCH_QUERY)
-        val moviesPaginatedResponse = savedState.getParcelable<PaginatedResponse<Movie>>(KEY_PAGINATED_MOVIES)
-        presenter.loadPresenterState(query, moviesPaginatedResponse)
-    }
-
-    override fun showProgressBar(show: Boolean) {
-        binding.progress.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    override fun showError(errorMessage: String) {
-        ViewUtils.createSnackbar(binding.toolbar, errorMessage, Snackbar.LENGTH_SHORT).show()
-    }
-
-    override fun resetMovies() {
-        adapter.resetItems()
-        adapter.setLoading(false)
-        endlessRecyclerOnScrollListener.setLoading(false)
-    }
-
-    override fun showMovies(movies: List<Movie>) {
-        adapter.addItems(movies)
-        endlessRecyclerOnScrollListener.setLoading(false)
-    }
-
-    override fun showSearchHint(show: Boolean) {
-        binding.moviesNoData.visibility = if (show) View.VISIBLE else View.GONE
-        binding.moviesNoData.text = getString(R.string.search_movies_hint)
-    }
-
-    override fun showNoDataView(show: Boolean) {
-        binding.moviesNoData.visibility = if (show) View.VISIBLE else View.GONE
-        binding.moviesNoData.text = getString(R.string.movies_no_data)
-    }
-
-    override fun showFooterProgress(show: Boolean) {
-        adapter.setLoading(show)
-        binding.footerProgress.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    override fun goToMovieDetail(movie: Movie) {
+    private fun goToMovieDetail(movie: Movie) {
         selectedMoviePoster?.let { poster ->
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this,
@@ -162,16 +149,36 @@ class SearchMoviesActivity : BaseActivity<ActivitySearchMoviesBinding>(
         overridePendingTransition(R.anim.fade_in, R.anim.none)
     }
 
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        // Menu is empty for this activity
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return false
+    }
+
+    override fun saveInstanceState(outState: Bundle) {
+        val currentState = viewModel.state.value
+        outState.putString(KEY_SEARCH_QUERY, currentState?.query)
+        outState.putParcelable(KEY_PAGINATED_MOVIES, currentState?.paginatedResponse)
+    }
+
+    override fun restoreInstanceState(savedState: Bundle) {
+        val query = savedState.getString(KEY_SEARCH_QUERY)
+        val moviesPaginatedResponse = savedState.getParcelable<PaginatedResponse<Movie>>(KEY_PAGINATED_MOVIES)
+        viewModel.processIntent(SearchMoviesIntent.RestoreState(query, moviesPaginatedResponse))
+    }
+
+
     override fun onItemClick(view: View) {
         val movie = view.tag as? Movie
         movie?.let {
             selectedMoviePoster = view.findViewById(R.id.poster)
-            presenter.onMovieItemClick(it)
+            viewModel.processIntent(SearchMoviesIntent.OnMovieItemClick(it))
         }
     }
 
     companion object {
-        const val KEY_ACTIVE_SEARCH = "ACTIVE_SEARCH_KEY"
         const val KEY_SEARCH_QUERY = "SEARCH_QUERY_KEY"
         const val KEY_PAGINATED_MOVIES = "PAGINATED_MOVIES_KEY"
 

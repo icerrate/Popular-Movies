@@ -6,6 +6,7 @@ import com.icerrate.popularmovies.data.model.Review
 import com.icerrate.popularmovies.data.model.Trailer
 import com.icerrate.popularmovies.data.model.TrailersResponse
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -16,20 +17,20 @@ import retrofit2.http.Query
 interface MovieAPI {
 
     @GET(ServerPaths.POPULAR_MOVIES)
-    fun getPopularMovies(@Query(ServerPaths.QUERY_PAGE) page: Int?): Call<PaginatedResponse<Movie>>
+    suspend fun getPopularMovies(@Query(ServerPaths.QUERY_PAGE) page: Int?): Response<PaginatedResponse<Movie>>
 
     @GET(ServerPaths.TOP_RATED_MOVIES)
-    fun getTopRatedMovies(@Query(ServerPaths.QUERY_PAGE) page: Int?): Call<PaginatedResponse<Movie>>
+    suspend fun getTopRatedMovies(@Query(ServerPaths.QUERY_PAGE) page: Int?): Response<PaginatedResponse<Movie>>
 
     @GET(ServerPaths.SEARCH_MOVIES)
-    fun searchMovies(
+    suspend fun searchMovies(
         @Query(ServerPaths.QUERY_STRING) query: String,
         @Query(ServerPaths.QUERY_PAGE) page: Int?
-    ): Call<PaginatedResponse<Movie>>
+    ): Response<PaginatedResponse<Movie>>
 
     @GET(ServerPaths.TRAILERS_MOVIES)
-    fun getMovieTrailers(@Path(ServerPaths.MOVIE_ID) movieId: Int?): Call<TrailersResponse<Trailer>>
+    suspend fun getMovieTrailers(@Path(ServerPaths.MOVIE_ID) movieId: Int?): Response<TrailersResponse<Trailer>>
 
     @GET(ServerPaths.REVIEWS)
-    fun getMovieReviews(@Path(ServerPaths.MOVIE_ID) movieId: Int?): Call<PaginatedResponse<Review>>
+    suspend fun getMovieReviews(@Path(ServerPaths.MOVIE_ID) movieId: Int?): Response<PaginatedResponse<Review>>
 }

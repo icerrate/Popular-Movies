@@ -2,10 +2,10 @@ package com.icerrate.popularmovies.data.source
 
 import com.icerrate.popularmovies.data.model.Movie
 import com.icerrate.popularmovies.data.model.PaginatedResponse
+import com.icerrate.popularmovies.data.model.Resource
 import com.icerrate.popularmovies.data.model.Review
 import com.icerrate.popularmovies.data.model.Trailer
 import com.icerrate.popularmovies.data.model.TrailersResponse
-import com.icerrate.popularmovies.view.common.BaseCallback
 
 /**
  * @author Ivan Cerrate.
@@ -29,39 +29,33 @@ class MovieRepository private constructor(
         }
     }
 
-    override fun getPopularMovies(page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>) {
-        remoteDataSource.getPopularMovies(page, callback)
-    }
+    override suspend fun getPopularMovies(page: Int?): Resource<PaginatedResponse<Movie>> =
+        remoteDataSource.getPopularMovies(page)
 
-    override fun getTopRatedMovies(page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>) {
-        remoteDataSource.getTopRatedMovies(page, callback)
-    }
+    override suspend fun getTopRatedMovies(page: Int?): Resource<PaginatedResponse<Movie>> =
+        remoteDataSource.getTopRatedMovies(page)
 
-    override fun searchMovies(query: String, page: Int?, callback: BaseCallback<PaginatedResponse<Movie>>) {
-        remoteDataSource.searchMovies(query, page, callback)
-    }
+    override suspend fun searchMovies(
+        query: String,
+        page: Int?
+    ): Resource<PaginatedResponse<Movie>> =
+        remoteDataSource.searchMovies(query, page)
 
-    override fun getMovieTrailers(movieId: Int?, callback: BaseCallback<TrailersResponse<Trailer>>) {
-        remoteDataSource.getMovieTrailers(movieId, callback)
-    }
+    override suspend fun getMovieTrailers(movieId: Int?): Resource<TrailersResponse<Trailer>> =
+        remoteDataSource.getMovieTrailers(movieId)
 
-    override fun getMovieReviews(movieId: Int?, callback: BaseCallback<PaginatedResponse<Review>>) {
-        remoteDataSource.getMovieReviews(movieId, callback)
-    }
+    override suspend fun getMovieReviews(movieId: Int?): Resource<PaginatedResponse<Review>> =
+        remoteDataSource.getMovieReviews(movieId)
 
-    override fun getFavoriteMovies(callback: BaseCallback<ArrayList<Movie>>) {
-        localDataSource.getFavoriteMovies(callback)
-    }
+    override suspend fun getFavoriteMovies(): Resource<ArrayList<Movie>> =
+        localDataSource.getFavoriteMovies()
 
-    override fun isFavoriteMovie(movieId: Int, callback: BaseCallback<Boolean>) {
-        localDataSource.isFavoriteMovie(movieId, callback)
-    }
+    override suspend fun isFavoriteMovie(movieId: Int): Resource<Boolean> =
+        localDataSource.isFavoriteMovie(movieId)
 
-    override fun addFavoriteMovie(movie: Movie, callback: BaseCallback<Unit>) {
-        localDataSource.addFavoriteMovie(movie, callback)
-    }
+    override suspend fun addFavoriteMovie(movie: Movie): Resource<Unit> =
+        localDataSource.addFavoriteMovie(movie)
 
-    override fun removeFavoriteMovie(movieId: Int, callback: BaseCallback<Unit>) {
-        localDataSource.removeFavoriteMovie(movieId, callback)
-    }
+    override suspend fun removeFavoriteMovie(movieId: Int): Resource<Unit> =
+        localDataSource.removeFavoriteMovie(movieId)
 }
