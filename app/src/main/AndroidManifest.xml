@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.icerrate.popularmovies">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:name=".PopularMoviesApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".view.movies.catalog.MoviesCatalogActivity"
             android:label="@string/title_activity_movies"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -32,7 +32,8 @@
         </activity>
         <provider
             android:name=".provider.db.MovieContentProvider"
-            android:authorities="com.icerrate.popularmovies.provider.db"/>
+            android:authorities="com.icerrate.popularmovies.provider.db"
+            android:exported="false"/>
     </application>
 
 </manifest>
