@@ -5,7 +5,8 @@
       "Bash(grep:*)",
       "Bash(find:*)",
       "Bash(ls:*)",
-      "WebFetch(domain:mvnrepository.com)"
+      "WebFetch(domain:mvnrepository.com)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }
