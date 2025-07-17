@@ -12,13 +12,13 @@ import kotlinx.parcelize.Parcelize
 data class Trailer(
     val id: String,
     @SerializedName("iso_639_1")
-    val iso639: String,
+    val iso639: String = "",
     @SerializedName("iso_3166_1")
-    val iso3166: String,
+    val iso3166: String = "",
     val key: String,
     val name: String,
     val site: String,
-    val size: Int,
+    val size: Int = 0,
     val type: String
 ) : Parcelable {
 
