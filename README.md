@@ -1,7 +1,8 @@
 # Popular-Movies
 
 Project for Udacity - Associate Android Developer Fast Track Nanodegree.
-Note: Migrated to Kotlin and modernize libraries with claude code to check capabilities and improve prompting. 
+
+Note: Migrated to Kotlin and modernize libraries with Claude Code to check capabilities and improve prompting. 
 
 ## Api Key
 
